@@ -3,52 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <title>KaKaReza Black Jack</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <style>
-    body {
-      background: linear-gradient(135deg, #232526, #414345 80%);
-      font-family: 'Segoe UI', Arial, sans-serif;
-      color: #fff;
+    html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
+    }
+    body {
+      background: #232526;
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
       min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
     }
     h1 {
       text-align: center;
-      font-size: 2.2em;
-      margin: 24px 0 12px 0;
-      letter-spacing: 2px;
+      font-size: 2.1em;
+      margin: 16px 0 4px 0;
       color: #ffd600;
-      text-shadow: 2px 2px 7px #000;
       font-weight: bold;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 6px #000;
     }
     #game-area {
-      max-width: 480px;
-      margin: 0 auto 0 auto;
-      background: rgba(30,30,30,0.98);
-      border-radius: 18px;
-      box-shadow: 0 0 30px #0008;
-      padding: 0 0 20px 0;
-      min-height: 90vh;
+      flex: 1 1 auto;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      position: relative;
+      justify-content: flex-start;
+      align-items: stretch;
+      min-height: 0;
+      padding: 0;
+      background: #232526;
     }
     .section-title {
       text-align: center;
-      font-size: 1.2em;
-      margin: 18px 0 6px 0;
+      font-size: 1.1em;
+      margin: 8px 0 0 0;
       color: #ffd600;
-      letter-spacing: 1px;
       font-weight: bold;
-      text-shadow: 1px 1px 3px #000;
+      letter-spacing: 1px;
     }
     .cards-area {
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      min-height: 110px;
+      min-height: 210px;
       margin: 0 0 0 0;
       position: relative;
       z-index: 2;
@@ -60,19 +63,19 @@
       position: relative;
     }
     .card {
-      width: 60px;
-      height: 88px;
-      margin-left: -28px;
+      width: 120px;
+      height: 176px;
+      margin-left: -44px;
       background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px #0008;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px #000a;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2em;
+      font-size: 3.8em;
       font-weight: bold;
       color: #333;
-      border: 2px solid #333;
+      border: 3px solid #333;
       position: relative;
       z-index: 1;
       transition: transform 0.5s cubic-bezier(.4,1.5,.6,1), opacity 0.2s;
@@ -83,7 +86,7 @@
     .card.back {
       background: linear-gradient(135deg, #7c4dff 60%, #ff4081 100%);
       color: transparent;
-      border: 2px solid #fff;
+      border: 3px solid #fff;
     }
     .card.deal-anim {
       transform: translateX(-120px);
@@ -91,19 +94,19 @@
     }
     .hand-value {
       position: absolute;
-      top: -18px;
+      top: -24px;
       left: 0;
       width: 100%;
       text-align: left;
-      font-size: 1em;
+      font-size: 1.2em;
       color: #ffd600;
       font-weight: bold;
       text-shadow: 1px 1px 3px #000;
     }
     #player-chips {
-      font-size: 1.2em;
+      font-size: 1.3em;
       color: #fffde7;
-      margin: 12px 0 0 0;
+      margin: 16px 0 0 0;
       text-align: center;
       font-weight: bold;
       letter-spacing: 1px;
@@ -111,16 +114,16 @@
     #actions {
       display: flex;
       justify-content: center;
-      margin: 18px 0 0 0;
+      margin: 12px 0 0 0;
       flex-wrap: wrap;
       gap: 10px;
     }
     #actions button {
-      font-size: 1.1em;
+      font-size: 1.2em;
       font-weight: bold;
       border: none;
       border-radius: 10px;
-      padding: 14px 26px;
+      padding: 16px 30px;
       margin: 0 4px;
       min-width: 120px;
       box-shadow: 0 2px 8px #0004;
@@ -141,44 +144,48 @@
       text-align: center;
       font-size: 1.1em;
       min-height: 28px;
-      margin: 18px 0 0 0;
+      margin: 14px 0 0 0;
       color: #ffd600;
       text-shadow: 1px 1px 4px #000;
       font-weight: bold;
     }
     #bottom-controls {
-      width: 100%;
-      margin-top: 18px;
-      padding-bottom: 8px;
-      background: none;
+      width: 100vw;
+      max-width: 100vw;
+      background: #232526;
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
-      z-index: 10;
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      z-index: 20;
+      padding-bottom: env(safe-area-inset-bottom, 8px);
+      box-sizing: border-box;
     }
     #chips {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0 0 10px 0;
+      margin: 0 0 4px 0;
       flex-wrap: wrap;
       gap: 14px;
     }
     .chip {
-      width: 52px;
-      height: 52px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       border: 4px solid #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3em;
+      font-size: 1.5em;
       font-weight: bold;
       box-shadow: 0 2px 12px #000a;
       cursor: pointer;
       transition: transform 0.1s;
       user-select: none;
+      margin-bottom: 4px;
     }
     .chip:active {
       transform: scale(1.08);
@@ -190,7 +197,7 @@
     #bet-info {
       text-align: center;
       font-size: 1.1em;
-      margin: 8px 0 0 0;
+      margin: 4px 0 0 0;
       color: #ffe082;
       font-weight: bold;
       letter-spacing: 1px;
@@ -199,8 +206,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 10px 0 0 0;
-      gap: 10px;
+      margin: 4px 0 0 0;
+      gap: 8px;
     }
     #bet-controls button, #next-hand-btn {
       background: #333;
@@ -209,8 +216,8 @@
       border: none;
       border-radius: 8px;
       font-size: 1em;
-      margin: 0 4px;
-      padding: 12px 20px;
+      margin: 0 2px;
+      padding: 12px 18px;
       cursor: pointer;
       box-shadow: 0 2px 8px #0008;
       transition: background 0.2s, transform 0.1s;
@@ -223,7 +230,7 @@
       background: #ffd600;
       color: #222;
       font-size: 1.1em;
-      margin-top: 10px;
+      margin-top: 6px;
       min-width: 120px;
       font-weight: bold;
     }
@@ -235,12 +242,13 @@
       100% { color: #00e676; text-shadow: 0 0 40px #00e676; }
     }
     @media (max-width: 600px) {
-      #game-area { padding: 0 0 10px 0; }
-      .card { width: 42px; height: 62px; font-size: 1.1em; margin-left: -17px; }
-      .chip { width: 36px; height: 36px; font-size: 0.95em; }
+      #game-area { padding: 0; }
+      .card { width: 80px; height: 116px; font-size: 2.2em; margin-left: -28px; }
+      .chip { width: 40px; height: 40px; font-size: 1em; }
       #actions button, #bet-controls button, #next-hand-btn { font-size: 0.9em; padding: 8px 10px; min-width: 70px;}
       #player-chips, #status-message, #bet-info { font-size: 1em; }
       .section-title { font-size: 1em; }
+      #bottom-controls { padding-bottom: env(safe-area-inset-bottom, 4px);}
     }
   </style>
 </head>
@@ -254,21 +262,21 @@
     <div id="player-chips">Your Chips: <span id="chips-total">5000</span></div>
     <div id="actions"></div>
     <div id="status-message"></div>
-    <div id="bottom-controls">
-      <div id="chips">
-        <div class="chip chip10" data-value="10">10</div>
-        <div class="chip chip20" data-value="20">20</div>
-        <div class="chip chip50" data-value="50">50</div>
-        <div class="chip chip100" data-value="100">100</div>
-      </div>
-      <div id="bet-info">Place your bet (Min: 20)</div>
-      <div id="bet-controls">
-        <button id="clear-bet">Clear Bet</button>
-        <button id="redo-bet">Redo Bet</button>
-        <button id="deal-btn">Deal</button>
-      </div>
-      <button id="next-hand-btn" style="display:none;">Next Hand</button>
+  </div>
+  <div id="bottom-controls">
+    <div id="chips">
+      <div class="chip chip10" data-value="10">10</div>
+      <div class="chip chip20" data-value="20">20</div>
+      <div class="chip chip50" data-value="50">50</div>
+      <div class="chip chip100" data-value="100">100</div>
     </div>
+    <div id="bet-info">Place your bet (Min: 20)</div>
+    <div id="bet-controls">
+      <button id="clear-bet">Clear Bet</button>
+      <button id="redo-bet">Redo Bet</button>
+      <button id="deal-btn">Deal</button>
+    </div>
+    <button id="next-hand-btn" style="display:none;">Next Hand</button>
   </div>
   <script>
     // Suits and values
@@ -414,7 +422,7 @@
         else cardDiv.innerHTML = getCardSymbol(card);
         if (anim) {
           cardDiv.classList.add('deal-anim');
-          setTimeout(() => cardDiv.classList.remove('deal-anim'), 60 + idx * 120);
+          setTimeout(() => cardDiv.classList.remove('deal-anim'), 80 + idx * 120);
         }
         dealerCards.appendChild(cardDiv);
       });
@@ -438,7 +446,7 @@
           cardDiv.innerHTML = getCardSymbol(card);
           if (anim) {
             cardDiv.classList.add('deal-anim');
-            setTimeout(() => cardDiv.classList.remove('deal-anim'), 120 + idx * 120);
+            setTimeout(() => cardDiv.classList.remove('deal-anim'), 160 + idx * 120);
           }
           handDiv.appendChild(cardDiv);
         });
