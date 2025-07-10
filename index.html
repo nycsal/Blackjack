@@ -537,6 +537,7 @@
       playerBlackjack = false;
       dealerBlackjack = false;
       handResults = [];
+      // Reset waitingNextHand here so chips can be placed after Next Hand
       waitingNextHand = false;
       updateChips();
       updateBetInfo();
@@ -570,8 +571,13 @@
       updateBetBox();
       if (bet === 0 && !inPlay && !waitingNextHand) {
         betInfo.classList.add('pulse');
+        dealBtn.classList.remove('pulse');
+      } else if (bet >= 20 && !inPlay && !waitingNextHand) {
+        betInfo.classList.remove('pulse');
+        dealBtn.classList.add('pulse');
       } else {
         betInfo.classList.remove('pulse');
+        dealBtn.classList.remove('pulse');
       }
     }
 
@@ -680,8 +686,12 @@
       clearBetBtn.disabled = !val;
       redoBetBtn.disabled = !val;
       dealBtn.disabled = !val;
-      if (val) dealBtn.classList.add('pulse');
-      else dealBtn.classList.remove('pulse');
+      if (val) {
+        if (bet >= 20) dealBtn.classList.add('pulse');
+        else dealBtn.classList.remove('pulse');
+      } else {
+        dealBtn.classList.remove('pulse');
+      }
     }
     chipsArea.onclick = (e) => {
       if (!e.target.classList.contains('chip')) return;
@@ -922,7 +932,6 @@
       statusMsg.textContent = messages.join(' | ');
       if (winAnim) showResultAnimation('win');
       else if (loseAnim) showResultAnimation('lose');
-      waitingNextHand = false;
       if (playerChips <= 0) {
         setTimeout(() => {
           needMoneyBtn.style.display = '';
