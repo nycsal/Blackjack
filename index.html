@@ -684,7 +684,8 @@
       else dealBtn.classList.remove('pulse');
     }
     chipsArea.onclick = (e) => {
-      if (!e.target.classList.contains('chip') || inPlay || waitingNextHand) return;
+      if (!e.target.classList.contains('chip')) return;
+      if (inPlay || waitingNextHand) return;
       let val = parseInt(e.target.getAttribute('data-value'));
       if (bet + val > playerChips) return;
       bet += val;
@@ -921,13 +922,18 @@
       statusMsg.textContent = messages.join(' | ');
       if (winAnim) showResultAnimation('win');
       else if (loseAnim) showResultAnimation('lose');
-      waitingNextHand = true;
+      waitingNextHand = false;
       if (playerChips <= 0) {
-        needMoneyBtn.style.display = '';
-        needMoneyBtn.classList.add('pulse');
+        setTimeout(() => {
+          needMoneyBtn.style.display = '';
+          needMoneyBtn.classList.add('pulse');
+        }, 200);
       } else {
-        nextHandBtn.style.display = '';
-        nextHandBtn.classList.add('pulse');
+        setTimeout(() => {
+          nextHandBtn.style.display = '';
+          nextHandBtn.classList.add('pulse');
+          waitingNextHand = true;
+        }, 200);
       }
       enableBetting(false);
     }
@@ -935,6 +941,8 @@
     nextHandBtn.onclick = () => {
       if (!waitingNextHand) return;
       nextHandBtn.classList.remove('pulse');
+      nextHandBtn.style.display = 'none';
+      waitingNextHand = false;
       resetGame();
     };
 
