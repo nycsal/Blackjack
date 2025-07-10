@@ -537,7 +537,7 @@
       playerBlackjack = false;
       dealerBlackjack = false;
       handResults = [];
-      waitingNextHand = false; // <--- THIS IS THE FIX
+      waitingNextHand = false; // <-- always reset here
       updateChips();
       updateBetInfo();
       renderHands();
@@ -947,7 +947,6 @@
     }
 
     nextHandBtn.onclick = () => {
-      if (!waitingNextHand) return;
       waitingNextHand = false; // <--- CRITICAL: Reset before resetGame!
       nextHandBtn.classList.remove('pulse');
       nextHandBtn.style.display = 'none';
