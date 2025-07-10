@@ -3,32 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <title>KaKaReza Black Jack</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <style>
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
+      overflow: hidden;
+      touch-action: none;
+      background: #232526;
     }
     body {
-      background: #232526;
-      color: #fff;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: fixed;
+      left: 0;
+      top: 0;
       font-family: 'Segoe UI', Arial, sans-serif;
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
+      color: #fff;
+    }
+    #fixed-container {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 420px;
+      height: 770px;
+      background: rgba(30,30,30,0.97);
+      border-radius: 22px;
+      box-shadow: 0 0 40px #000a;
       display: flex;
       flex-direction: column;
-      height: 100svh;
-      box-sizing: border-box;
-      overflow-x: hidden;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: hidden;
+      z-index: 10;
+    }
+    @media (max-width: 480px), (max-height: 800px) {
+      #fixed-container {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+      }
     }
     .branding-spacer {
       height: 60px;
-      width: 100%;
       min-height: 60px;
+      width: 100%;
       pointer-events: none;
       user-select: none;
+      flex-shrink: 0;
     }
     h1 {
       text-align: center;
@@ -38,19 +63,21 @@
       font-weight: bold;
       letter-spacing: 2px;
       text-shadow: 1px 1px 6px #000;
+      flex-shrink: 0;
     }
     #game-area {
       flex: 1 1 auto;
+      width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
       align-items: stretch;
       min-height: 0;
       padding: 0;
-      background: #232526;
+      background: none;
       box-sizing: border-box;
       max-width: 100vw;
-      overflow-x: hidden;
+      overflow: hidden;
     }
     .section-title {
       text-align: center;
@@ -59,6 +86,7 @@
       color: #ffd600;
       font-weight: bold;
       letter-spacing: 1px;
+      flex-shrink: 0;
     }
     .cards-area {
       display: flex;
@@ -68,6 +96,7 @@
       margin: 0 0 0 0;
       position: relative;
       z-index: 2;
+      flex-shrink: 0;
     }
     .hand {
       display: flex;
@@ -115,6 +144,8 @@
       color: #ffd600;
       font-weight: bold;
       text-shadow: 1px 1px 3px #000;
+      pointer-events: none;
+      user-select: none;
     }
     #player-chips {
       font-size: 1.3em;
@@ -123,6 +154,7 @@
       text-align: center;
       font-weight: bold;
       letter-spacing: 1px;
+      flex-shrink: 0;
     }
     #actions {
       display: flex;
@@ -130,6 +162,7 @@
       margin: 12px 0 0 0;
       flex-wrap: wrap;
       gap: 10px;
+      flex-shrink: 0;
     }
     #actions button {
       font-size: 1.2em;
@@ -161,20 +194,19 @@
       color: #ffd600;
       text-shadow: 1px 1px 4px #000;
       font-weight: bold;
+      flex-shrink: 0;
     }
     #bottom-controls {
-      width: 100vw;
-      max-width: 100vw;
+      width: 100%;
       background: #232526;
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: sticky;
-      bottom: 0;
-      left: 0;
+      position: relative;
       z-index: 20;
-      padding-bottom: env(safe-area-inset-bottom, 8px);
+      padding-bottom: 8px;
       box-sizing: border-box;
+      flex-shrink: 0;
     }
     #chips {
       display: flex;
@@ -254,44 +286,50 @@
       0% { color: #ffeb3b; text-shadow: 0 0 24px #fff; }
       100% { color: #00e676; text-shadow: 0 0 40px #00e676; }
     }
-    @media (max-width: 600px) {
-      #game-area { padding: 0; }
+    @media (max-width: 600px), (max-height: 800px) {
+      #fixed-container {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+      }
+      .branding-spacer { height: 36px; min-height: 36px; }
       .card { width: 80px; height: 116px; font-size: 2.2em; margin-left: -28px; }
       .chip { width: 40px; height: 40px; font-size: 1em; }
       #actions button, #bet-controls button, #next-hand-btn { font-size: 0.9em; padding: 8px 10px; min-width: 70px;}
       #player-chips, #status-message, #bet-info { font-size: 1em; }
       .section-title { font-size: 1em; }
-      #bottom-controls { padding-bottom: env(safe-area-inset-bottom, 4px);}
-      .branding-spacer { height: 36px; min-height: 36px; }
+      #bottom-controls { padding-bottom: 4px;}
     }
   </style>
 </head>
 <body>
-  <div class="branding-spacer"></div>
-  <h1>KaKaReza Black Jack</h1>
-  <div id="game-area">
-    <div class="section-title">Dealer</div>
-    <div class="cards-area" id="dealer-cards"></div>
-    <div class="section-title">Player</div>
-    <div class="cards-area" id="player-cards"></div>
-    <div id="player-chips">Your Chips: <span id="chips-total">5000</span></div>
-    <div id="actions"></div>
-    <div id="status-message"></div>
-  </div>
-  <div id="bottom-controls">
-    <div id="chips">
-      <div class="chip chip10" data-value="10">10</div>
-      <div class="chip chip20" data-value="20">20</div>
-      <div class="chip chip50" data-value="50">50</div>
-      <div class="chip chip100" data-value="100">100</div>
+  <div id="fixed-container">
+    <div class="branding-spacer"></div>
+    <h1>KaKaReza Black Jack</h1>
+    <div id="game-area">
+      <div class="section-title">Dealer</div>
+      <div class="cards-area" id="dealer-cards"></div>
+      <div class="section-title">Player</div>
+      <div class="cards-area" id="player-cards"></div>
+      <div id="player-chips">Your Chips: <span id="chips-total">5000</span></div>
+      <div id="actions"></div>
+      <div id="status-message"></div>
     </div>
-    <div id="bet-info">Place your bet (Min: 20)</div>
-    <div id="bet-controls">
-      <button id="clear-bet">Clear Bet</button>
-      <button id="redo-bet">Redo Bet</button>
-      <button id="deal-btn">Deal</button>
+    <div id="bottom-controls">
+      <div id="chips">
+        <div class="chip chip10" data-value="10">10</div>
+        <div class="chip chip20" data-value="20">20</div>
+        <div class="chip chip50" data-value="50">50</div>
+        <div class="chip chip100" data-value="100">100</div>
+      </div>
+      <div id="bet-info">Place your bet (Min: 20)</div>
+      <div id="bet-controls">
+        <button id="clear-bet">Clear Bet</button>
+        <button id="redo-bet">Redo Bet</button>
+        <button id="deal-btn">Deal</button>
+      </div>
+      <button id="next-hand-btn" style="display:none;">Next Hand</button>
     </div>
-    <button id="next-hand-btn" style="display:none;">Next Hand</button>
   </div>
   <script>
     // Suits and values
@@ -753,7 +791,12 @@
     deck = buildDeck();
     resetGame();
 
-    // For mobile: prevent double-tap zoom
+    // Prevent all scrolling and bounce on mobile
+    document.body.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    // Prevent double-tap zoom
     document.addEventListener('touchstart', function preventZoom(e) {
       if (e.touches.length > 1) e.preventDefault();
     }, { passive: false });
