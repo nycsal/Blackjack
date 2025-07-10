@@ -256,6 +256,7 @@
       margin: 0 0 4px 0;
       flex-wrap: wrap;
       gap: 14px;
+      pointer-events: auto !important;
     }
     .chip {
       width: 56px;
@@ -272,6 +273,7 @@
       transition: transform 0.1s;
       user-select: none;
       margin-bottom: 4px;
+      pointer-events: auto !important;
     }
     .chip:active {
       transform: scale(1.08);
@@ -288,6 +290,7 @@
       font-weight: bold;
       letter-spacing: 1px;
       transition: box-shadow 0.2s, background 0.2s;
+      pointer-events: none;
     }
     #bet-info.pulse {
       animation: pulseBtn 1.1s infinite;
@@ -295,6 +298,7 @@
       border-radius: 12px;
       box-shadow: 0 0 0 8px #ffd60033;
       color: #ffd600;
+      pointer-events: none;
     }
     #bet-controls {
       display: flex;
@@ -537,7 +541,7 @@
       playerBlackjack = false;
       dealerBlackjack = false;
       handResults = [];
-      waitingNextHand = false; // <-- always reset here
+      waitingNextHand = false;
       updateChips();
       updateBetInfo();
       renderHands();
@@ -580,9 +584,7 @@
       }
     }
 
-    // Render dealer and player hands, with value to the right
     function renderHands(showDealerHole = false, anim = false, hitIdx = null) {
-      // Dealer
       dealerCardsContainer.innerHTML = '';
       let dealerHandDiv = document.createElement('div');
       dealerHandDiv.className = 'hand';
@@ -598,14 +600,12 @@
         }
         dealerHandDiv.appendChild(cardDiv);
       });
-      // Value to the right
       let dealerValDiv = document.createElement('div');
       dealerValDiv.className = 'hand-value-side';
       dealerValDiv.textContent = (showDealerHole || !inPlay) ? handValue(dealerHand) : '';
       dealerHandDiv.appendChild(dealerValDiv);
       dealerCardsContainer.appendChild(dealerHandDiv);
 
-      // Player
       playerCardsContainer.innerHTML = '';
       let playerHandDiv = document.createElement('div');
       playerHandDiv.className = 'hand';
@@ -620,7 +620,6 @@
         }
         playerHandDiv.appendChild(cardDiv);
       });
-      // Value to the right
       let playerValDiv = document.createElement('div');
       playerValDiv.className = 'hand-value-side';
       playerValDiv.textContent = handValue(playerHands[0]);
@@ -632,19 +631,16 @@
       actionsArea.innerHTML = '';
       if (!inPlay) return;
       let hand = playerHands[currentHandIdx];
-      // Hit
       let hitBtn = document.createElement('button');
       hitBtn.textContent = 'Hit';
       hitBtn.className = 'hit-btn';
       hitBtn.onclick = () => playerHit();
       actionsArea.appendChild(hitBtn);
-      // Stand
       let standBtn = document.createElement('button');
       standBtn.textContent = 'Stand';
       standBtn.className = 'stand-btn';
       standBtn.onclick = () => playerStand();
       actionsArea.appendChild(standBtn);
-      // Double
       if (canDoubleDown(hand)) {
         let dblBtn = document.createElement('button');
         dblBtn.textContent = 'Double Down';
@@ -652,7 +648,6 @@
         dblBtn.onclick = () => playerDouble();
         actionsArea.appendChild(dblBtn);
       }
-      // Split
       if (canSplitHand(hand)) {
         let splitBtn = document.createElement('button');
         splitBtn.textContent = 'Split';
@@ -678,10 +673,11 @@
       toHand.push(card);
     }
 
-    // Betting controls
     function enableBetting(val) {
       let chips = document.querySelectorAll('.chip');
+      let chipsParent = document.getElementById('chips');
       chips.forEach(c => c.style.pointerEvents = val ? 'auto' : 'none');
+      chipsParent.style.pointerEvents = val ? 'auto' : 'none';
       clearBetBtn.disabled = !val;
       redoBetBtn.disabled = !val;
       dealBtn.disabled = !val;
@@ -719,7 +715,6 @@
       startHand();
     };
 
-    // Main gameplay
     function startHand() {
       clearTimeouts();
       inPlay = true;
@@ -947,14 +942,14 @@
     }
 
     nextHandBtn.onclick = () => {
-      waitingNextHand = false; // <--- CRITICAL: Reset before resetGame!
+      waitingNextHand = false;
       nextHandBtn.classList.remove('pulse');
       nextHandBtn.style.display = 'none';
       resetGame();
     };
 
     needMoneyBtn.onclick = () => {
-      waitingNextHand = false; // <--- CRITICAL: Reset before resetGame!
+      waitingNextHand = false;
       playerChips += 10000;
       updateChips();
       needMoneyBtn.style.display = 'none';
