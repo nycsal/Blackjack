@@ -948,13 +948,14 @@
 
     nextHandBtn.onclick = () => {
       if (!waitingNextHand) return;
+      waitingNextHand = false; // <-- FIX: Reset here as well!
       nextHandBtn.classList.remove('pulse');
       nextHandBtn.style.display = 'none';
-      waitingNextHand = false; // <-- FIX: Reset here as well!
       resetGame();
     };
 
     needMoneyBtn.onclick = () => {
+      waitingNextHand = false; // <-- FIX: Reset here as well!
       playerChips += 10000;
       updateChips();
       needMoneyBtn.style.display = 'none';
