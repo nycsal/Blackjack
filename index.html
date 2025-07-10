@@ -537,8 +537,7 @@
       playerBlackjack = false;
       dealerBlackjack = false;
       handResults = [];
-      // Reset waitingNextHand here so chips can be placed after Next Hand
-      waitingNextHand = false;
+      waitingNextHand = false; // <-- FIX: Always reset here!
       updateChips();
       updateBetInfo();
       renderHands();
@@ -951,7 +950,7 @@
       if (!waitingNextHand) return;
       nextHandBtn.classList.remove('pulse');
       nextHandBtn.style.display = 'none';
-      waitingNextHand = false;
+      waitingNextHand = false; // <-- FIX: Reset here as well!
       resetGame();
     };
 
