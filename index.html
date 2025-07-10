@@ -231,10 +231,10 @@
       resultAnim.style.display = 'none';
       enableBetting(true);
       dealBtn.classList.add('pulse');
+      dealBtn.disabled = false;
       betInfo.classList.add('pulse');
       updateBetBox();
       needMoneyBtn.style.display = 'none';
-      // If out of money, show the need money button immediately
       if (playerChips < 20) {
         enableBetting(false);
         needMoneyBtn.style.display = '';
@@ -260,12 +260,15 @@
       if (bet === 0 && !inPlay && !waitingNextHand) {
         betInfo.classList.add('pulse');
         dealBtn.classList.remove('pulse');
+        dealBtn.disabled = true;
       } else if (bet >= 20 && !inPlay && !waitingNextHand) {
         betInfo.classList.remove('pulse');
         dealBtn.classList.add('pulse');
+        dealBtn.disabled = false;
       } else {
         betInfo.classList.remove('pulse');
         dealBtn.classList.remove('pulse');
+        dealBtn.disabled = true;
       }
     }
 
@@ -365,10 +368,9 @@
       chipsParent.style.pointerEvents = val ? 'auto' : 'none';
       clearBetBtn.disabled = !val;
       redoBetBtn.disabled = !val;
-      dealBtn.disabled = !val;
-      if (val) {
-        if (bet >= 20) dealBtn.classList.add('pulse');
-        else dealBtn.classList.remove('pulse');
+      dealBtn.disabled = !val || bet < 20;
+      if (val && bet >= 20) {
+        dealBtn.classList.add('pulse');
       } else {
         dealBtn.classList.remove('pulse');
       }
@@ -386,23 +388,34 @@
       if (bet + val > playerChips) return;
       bet += val;
       updateBetInfo();
+      if (bet >= 20) {
+        dealBtn.disabled = false;
+        dealBtn.classList.add('pulse');
+      }
     };
     clearBetBtn.onclick = () => {
       if (inPlay || waitingNextHand) return;
       bet = 0;
       updateBetInfo();
+      dealBtn.disabled = true;
+      dealBtn.classList.remove('pulse');
     };
     redoBetBtn.onclick = () => {
       if (inPlay || waitingNextHand) return;
       if (lastBet > 0 && lastBet <= playerChips) {
         bet = lastBet;
         updateBetInfo();
+        if (bet >= 20) {
+          dealBtn.disabled = false;
+          dealBtn.classList.add('pulse');
+        }
       }
     };
     dealBtn.onclick = () => {
       if (inPlay || bet < 20 || bet > playerChips || waitingNextHand) return;
       dealBtn.classList.remove('pulse');
       betInfo.classList.remove('pulse');
+      dealBtn.disabled = true;
       startHand();
     };
 
@@ -617,7 +630,6 @@
       statusMsg.textContent = messages.join(' | ');
       if (winAnim) showResultAnimation('win');
       else if (loseAnim) showResultAnimation('lose');
-      // If out of money, show the need money button
       if (playerChips < 20) {
         setTimeout(() => {
           enableBetting(false);
@@ -641,27 +653,4 @@
       resetGame();
     };
 
-    needMoneyBtn.onclick = () => {
-      waitingNextHand = false;
-      playerChips += 10000;
-      updateChips();
-      needMoneyBtn.style.display = 'none';
-      resetGame();
-    };
-
-    // Init
-    deck = buildDeck();
-    resetGame();
-
-    // Prevent all scrolling and bounce on mobile
-    document.body.addEventListener('touchmove', function(e) {
-      e.preventDefault();
-    }, { passive: false });
-
-    // Prevent double-tap zoom
-    document.addEventListener('touchstart', function preventZoom(e) {
-      if (e.touches.length > 1) e.preventDefault();
-    }, { passive: false });
-  </script>
-</body>
-</html>
+    needMoneyBtn.onclick =
