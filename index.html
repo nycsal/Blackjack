@@ -160,11 +160,24 @@
     .win-anim { color: #42a5f5; text-shadow: 0 2px 12px #000, 0 0 24px #42a5f5;}
     .lose-anim { color: #ff5252; text-shadow: 0 2px 12px #000, 0 0 24px #ff5252;}
     @keyframes showResult { 0% { opacity: 0; transform: translate(-50%, -80%) scale(0.7);} 10% { opacity: 1; transform: translate(-50%, -50%) scale(1.07);} 80% { opacity: 1; transform: translate(-50%, -50%) scale(1);} 100% { opacity: 0; transform: translate(-50%, -20%) scale(0.7);} }
-    #refill-btn {
+    /* --- RELOAD BUTTON --- */
+    #reload-box {
       position: fixed;
-      top: 12px;
-      right: 18px;
+      top: 96px;
+      right: 96px;
       z-index: 1002;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(30,52,100,0.96);
+      border-radius: 18px;
+      box-shadow: 0 2px 16px #0006;
+      padding: 10px 18px 12px 18px;
+      border: 2px solid #42a5f5;
+      min-width: 90px;
+      user-select: none;
+    }
+    #reload-btn {
       background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
       color: #fff;
       border: none;
@@ -179,26 +192,30 @@
       align-items: center;
       justify-content: center;
       transition: background 0.2s;
-      opacity: 0.92;
       outline: none;
-      user-select: none;
+      margin-bottom: 4px;
+      opacity: 0.96;
     }
-    #refill-btn:active { background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%); }
-    #refill-btn.disabled {
+    #reload-btn:active { background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%); }
+    #reload-btn.disabled {
       opacity: 0.3;
       pointer-events: none;
     }
+    #reload-label {
+      color: #42a5f5;
+      font-weight: bold;
+      font-size: 1.08em;
+      letter-spacing: 1px;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 0;
+      text-shadow: 0 1px 4px #0007;
+      user-select: none;
+    }
     @media (max-width: 600px), (max-height: 800px) {
-      .branding-spacer { height: 36px; min-height: 36px; }
-      .card { width: 80px; height: 116px; font-size: 2.2em; margin-left: -28px; }
-      .chip { width: 40px; height: 40px; font-size: 1em; }
-      #actions button, #bet-controls button, #next-hand-btn, #need-money-btn { font-size: 0.9em; padding: 8px 10px; min-width: 70px;}
-      .section-title { font-size: 1em; }
-      #bottom-controls { padding-bottom: 4px;}
-      .bankroll-box, .bet-box { min-width: 90px; padding: 8px 12px 4px 12px; font-size: 1em;}
-      .bankroll-value, .bet-value { font-size: 1.1em; min-width: 48px; padding: 4px 10px;}
-      .hand-value-side { font-size: 1em; min-width: 38px; padding: 4px 8px;}
-      #refill-btn { width: 40px; height: 40px; font-size: 1.3em;}
+      #reload-box { top: 36px; right: 12px; min-width: 60px; padding: 5px 8px 7px 8px; }
+      #reload-btn { width: 38px; height: 38px; font-size: 1.2em;}
+      #reload-label { font-size: 0.9em; }
     }
   </style>
 </head>
@@ -239,7 +256,10 @@
       <button id="next-hand-btn" style="display:none;">Next Hand</button>
     </div>
   </div>
-  <button id="refill-btn" title="Get 10,000 chips" aria-label="Get 10,000 chips">💲💲</button>
+  <div id="reload-box">
+    <button id="reload-btn" title="Get 10,000 chips" aria-label="Reload chips">💲💲</button>
+    <div id="reload-label">Reload</div>
+  </div>
   <div id="result-anim" style="display:none;"></div>
   <script>
     // Suits and values
@@ -275,7 +295,7 @@
     const bankrollBox = document.getElementById('chips-total');
     const betBox = document.getElementById('current-bet-value');
     const resultAnim = document.getElementById('result-anim');
-    const refillBtn = document.getElementById('refill-btn');
+    const reloadBtn = document.getElementById('reload-btn');
     function buildDeck() {
       let d = [];
       for (let n = 0; n < 8; n++) for (const s of SUITS) for (const v of VALUES) d.push({suit: s, name: v.name, value: v.value});
@@ -301,6 +321,7 @@
       statusMsg.textContent = ''; nextHandBtn.style.display = 'none'; nextHandBtn.classList.remove('pulse');
       resultAnim.style.display = 'none'; enableBetting(true); dealBtn.classList.add('pulse'); dealBtn.disabled = true;
       betInfo.classList.add('pulse'); updateBetBox();
+      updateReloadBtn();
     }
     function clearTimeouts() { for (const t of animTimeouts) clearTimeout(t); animTimeouts = []; }
     function updateChips() { chipsTotal.textContent = playerChips; }
@@ -466,15 +487,29 @@
         setTimeout(() => { nextHandBtn.style.display = ''; nextHandBtn.classList.add('pulse'); waitingNextHand = true; }, 200);
       }
       enableBetting(false);
+      updateReloadBtn();
     }
     nextHandBtn.onclick = () => { waitingNextHand = false; nextHandBtn.classList.remove('pulse'); nextHandBtn.style.display = 'none'; resetGame(); };
-    refillBtn.onclick = () => {
+    reloadBtn.onclick = () => {
       if (playerChips < 20) {
         playerChips += 10000;
         updateChips();
         resetGame();
       }
     };
+    function updateReloadBtn() {
+      if (playerChips < 20) {
+        reloadBtn.classList.remove('disabled');
+        reloadBtn.title = "Get 10,000 chips";
+        reloadBtn.setAttribute("aria-label", "Reload chips");
+        reloadBtn.style.opacity = 1;
+      } else {
+        reloadBtn.classList.add('disabled');
+        reloadBtn.title = "Available only when out of chips";
+        reloadBtn.setAttribute("aria-label", "Reload disabled");
+        reloadBtn.style.opacity = 0.5;
+      }
+    }
     deck = buildDeck();
     resetGame();
     document.body.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
