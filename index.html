@@ -21,8 +21,13 @@
       font-family: 'Segoe UI', Arial, sans-serif;
       color: #fff;
       box-sizing: border-box;
+      position: fixed;
+      left: 0; top: 0;
+      right: 0; bottom: 0;
     }
     #fixed-container {
+      position: fixed;
+      left: 0; top: 0;
       width: 100vw;
       height: 100dvh;
       min-height: 100dvh;
@@ -31,9 +36,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      overflow: auto;
+      overflow: hidden;
       box-sizing: border-box;
-      position: relative;
+      z-index: 1;
     }
     .branding-spacer {
       height: 7vh;
@@ -101,6 +106,13 @@
       min-width: 60px;
       justify-content: flex-start;
       white-space: nowrap;
+      background: #222;
+      border-radius: 10px;
+      padding: 8px 18px;
+      border: 2px solid #ffd600;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 8px #0006;
     }
     .card {
       width: 120px;
@@ -144,9 +156,7 @@
       from { transform: translateY(-120px) scale(0.7); opacity: 0.1;}
       to   { transform: none; opacity: 1;}
     }
-    .hand-value {
-      display: none;
-    }
+    .hand-value { display: none; }
     #actions {
       display: flex;
       justify-content: center;
@@ -187,13 +197,45 @@
       font-weight: bold;
       flex-shrink: 0;
     }
-    #bankroll {
-      text-align: center;
-      font-size: 1.2em;
-      margin: 6px 0 0 0;
-      color: #ffe082;
+    #bankroll-bet-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 18px;
+      margin: 8px 0 0 0;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .bankroll-box, .bet-box {
+      background: #181818;
+      border: 2px solid #ffd600;
+      border-radius: 16px;
+      padding: 14px 30px 10px 30px;
+      color: #ffd600;
+      font-size: 1.18em;
       font-weight: bold;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 120px;
+      box-shadow: 0 2px 8px #0007;
+      margin-bottom: 4px;
+    }
+    .bankroll-value, .bet-value {
+      background: #222;
+      color: #fff;
+      border-radius: 10px;
+      padding: 7px 18px;
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-top: 6px;
+      margin-bottom: 0;
       letter-spacing: 1px;
+      border: 1.5px solid #ffd600;
+      min-width: 70px;
+      box-shadow: 0 1px 4px #0006;
+      display: inline-block;
     }
     #bottom-controls {
       width: 100%;
@@ -313,10 +355,11 @@
       .card { width: 80px; height: 116px; font-size: 2.2em; margin-left: -28px; }
       .chip { width: 40px; height: 40px; font-size: 1em; }
       #actions button, #bet-controls button, #next-hand-btn { font-size: 0.9em; padding: 8px 10px; min-width: 70px;}
-      #status-message, #bet-info, #bankroll { font-size: 1em; }
       .section-title { font-size: 1em; }
       #bottom-controls { padding-bottom: 4px;}
-      .hand-value-side { font-size: 1em; min-width: 38px;}
+      .bankroll-box, .bet-box { min-width: 90px; padding: 8px 12px 4px 12px; font-size: 1em;}
+      .bankroll-value, .bet-value { font-size: 1.1em; min-width: 48px; padding: 4px 10px;}
+      .hand-value-side { font-size: 1em; min-width: 38px; padding: 4px 8px;}
     }
   </style>
 </head>
@@ -327,11 +370,17 @@
     <div id="game-area">
       <div class="section-title">Dealer</div>
       <div class="cards-area" id="dealer-cards-container"></div>
-      <div class="section-title">Player</div>
       <div class="cards-area" id="player-cards-container"></div>
       <div id="actions"></div>
       <div id="status-message"></div>
-      <div id="bankroll">Bank Roll: <span id="chips-total">5000</span></div>
+      <div id="bankroll-bet-row">
+        <div class="bankroll-box">Bank Roll
+          <span class="bankroll-value" id="chips-total">5000</span>
+        </div>
+        <div class="bet-box">Current Bet
+          <span class="bet-value" id="current-bet-value">0</span>
+        </div>
+      </div>
     </div>
     <div id="bottom-controls">
       <div id="chips">
@@ -399,7 +448,8 @@
     const actionsArea = document.getElementById('actions');
     const statusMsg = document.getElementById('status-message');
     const nextHandBtn = document.getElementById('next-hand-btn');
-    const playerChipsDiv = document.getElementById('bankroll');
+    const bankrollBox = document.getElementById('chips-total');
+    const betBox = document.getElementById('current-bet-value');
     const resultAnim = document.getElementById('result-anim');
 
     // Utility functions
@@ -472,6 +522,7 @@
       resultAnim.style.display = 'none';
       enableBetting(true);
       dealBtn.classList.add('pulse');
+      updateBetBox();
     }
 
     function clearTimeouts() {
@@ -482,9 +533,13 @@
     function updateChips() {
       chipsTotal.textContent = playerChips;
     }
+    function updateBetBox() {
+      betBox.textContent = bet;
+    }
 
     function updateBetInfo() {
       betInfo.textContent = bet > 0 ? `Current Bet: ${bet}` : 'Place your bet (Min: 20)';
+      updateBetBox();
     }
 
     // Render dealer and player hands, with value to the right
