@@ -77,16 +77,48 @@
     @keyframes slideInCard { from { transform: translateY(-80px) scale(0.6); opacity: 0.1;} to   { transform: none; opacity: 1;} }
     .card.hit-anim { animation: hitInCard 0.35s cubic-bezier(.4,1.5,.6,1); z-index: 2; }
     @keyframes hitInCard { from { transform: translateY(-120px) scale(0.7); opacity: 0.1;} to   { transform: none; opacity: 1;} }
-    #actions { display: flex; justify-content: center; margin: 4px 0 0 0; flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
+    /* --- SQUARE ACTION BUTTONS --- */
+    #actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 4px 0 0 0;
+      flex-wrap: wrap;
+      gap: 12px;
+      flex-shrink: 0;
+    }
     #actions button {
-      font-size: 1.2em; font-weight: bold; border: none; border-radius: 10px; padding: 16px 30px; margin: 0 4px; min-width: 120px;
-      box-shadow: 0 2px 8px #0004; transition: background 0.2s, transform 0.1s, color 0.2s; cursor: pointer; color: #fff;
+      width: 68px;
+      height: 68px;
+      min-width: 0;
+      min-height: 0;
+      padding: 0;
+      margin: 0;
+      font-size: 1.08em;
+      font-weight: bold;
+      border: none;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px #0004;
+      transition: background 0.2s, transform 0.1s, color 0.2s;
+      cursor: pointer;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     #actions .hit-btn { background: linear-gradient(180deg, #43e97b 0%, #38f9d7 100%); color: #0a1833; }
     #actions .stand-btn { background: linear-gradient(180deg, #ffd600 0%, #ff9800 100%); color: #222; }
     #actions .double-btn { background: linear-gradient(180deg, #1976d2 0%, #42a5f5 100%); }
     #actions .split-btn { background: linear-gradient(180deg, #ab47bc 0%, #7c4dff 100%); }
-    #actions button:disabled { background: #888; cursor: not-allowed; color: #eee; }
+    #actions button:disabled { background: #888; cursor: not-allowed; color: #eee; opacity: 0.7; }
+    @media (max-width: 600px), (max-height: 800px) {
+      #actions button {
+        width: 44px;
+        height: 44px;
+        font-size: 0.85em;
+        border-radius: 9px;
+      }
+    }
     #status-message { text-align: center; font-size: 1.1em; min-height: 28px; margin: 14px 0 0 0; color: #42a5f5; text-shadow: 1px 1px 4px #000; font-weight: bold; flex-shrink: 0; }
     #bankroll-bet-row { display: flex; justify-content: center; align-items: flex-start; gap: 18px; margin: 8px 0 0 0; flex-wrap: wrap; width: 100%; }
     .bankroll-box, .bet-box { background: #18294a; border: 2px solid #42a5f5; border-radius: 16px; padding: 14px 30px 10px 30px; color: #42a5f5; font-size: 1.18em; font-weight: bold; text-align: center; display: flex; flex-direction: column; align-items: center; min-width: 120px; box-shadow: 0 2px 8px #0007; margin-bottom: 4px; }
@@ -290,7 +322,6 @@
     const betBox = document.getElementById('current-bet-value');
     const resultAnim = document.getElementById('result-anim');
     const reloadBtn = document.getElementById('reload-btn');
-    // --- Game logic ---
     function buildDeck() {
       let d = [];
       for (let n = 0; n < 8; n++) for (const s of SUITS) for (const v of VALUES) d.push({suit: s, name: v.name, value: v.value});
@@ -362,7 +393,7 @@
       let hand = playerHands[currentHandIdx];
       let hitBtn = document.createElement('button'); hitBtn.textContent = 'Hit'; hitBtn.className = 'hit-btn'; hitBtn.onclick = () => playerHit(); actionsArea.appendChild(hitBtn);
       let standBtn = document.createElement('button'); standBtn.textContent = 'Stay'; standBtn.className = 'stand-btn'; standBtn.onclick = () => playerStand(); actionsArea.appendChild(standBtn);
-      if (canDoubleDown(hand)) { let dblBtn = document.createElement('button'); dblBtn.textContent = 'Double Down'; dblBtn.className = 'double-btn'; dblBtn.onclick = () => playerDouble(); actionsArea.appendChild(dblBtn); }
+      if (canDoubleDown(hand)) { let dblBtn = document.createElement('button'); dblBtn.textContent = 'Double'; dblBtn.className = 'double-btn'; dblBtn.onclick = () => playerDouble(); actionsArea.appendChild(dblBtn); }
       if (canSplitHand(hand)) { let splitBtn = document.createElement('button'); splitBtn.textContent = 'Split'; splitBtn.className = 'split-btn'; splitBtn.onclick = () => playerSplit(); actionsArea.appendChild(splitBtn); }
     }
     function getCardSymbol(card) { let suitSym = {'hearts':'♥','diamonds':'♦','spades':'♠','clubs':'♣'}[card.suit]; return card.name + suitSym; }
