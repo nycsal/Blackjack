@@ -537,7 +537,7 @@
       playerBlackjack = false;
       dealerBlackjack = false;
       handResults = [];
-      waitingNextHand = false; // <-- FIX: Always reset here!
+      waitingNextHand = false; // <--- THIS IS THE FIX
       updateChips();
       updateBetInfo();
       renderHands();
@@ -948,14 +948,14 @@
 
     nextHandBtn.onclick = () => {
       if (!waitingNextHand) return;
-      waitingNextHand = false; // <-- FIX: Reset here as well!
+      waitingNextHand = false; // <--- CRITICAL: Reset before resetGame!
       nextHandBtn.classList.remove('pulse');
       nextHandBtn.style.display = 'none';
       resetGame();
     };
 
     needMoneyBtn.onclick = () => {
-      waitingNextHand = false; // <-- FIX: Reset here as well!
+      waitingNextHand = false; // <--- CRITICAL: Reset before resetGame!
       playerChips += 10000;
       updateChips();
       needMoneyBtn.style.display = 'none';
