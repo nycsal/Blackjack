@@ -160,7 +160,6 @@
     const resultAnim = document.getElementById('result-anim');
     const needMoneyBtn = document.getElementById('need-money-btn');
 
-    // Utility functions
     function buildDeck() {
       let d = [];
       for (let n = 0; n < 8; n++) {
@@ -170,7 +169,6 @@
           }
         }
       }
-      // Shuffle
       for (let i = d.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [d[i], d[j]] = [d[j], d[i]];
@@ -231,7 +229,7 @@
       resultAnim.style.display = 'none';
       enableBetting(true);
       dealBtn.classList.add('pulse');
-      dealBtn.disabled = false;
+      dealBtn.disabled = true;
       betInfo.classList.add('pulse');
       updateBetBox();
       needMoneyBtn.style.display = 'none';
@@ -247,12 +245,8 @@
       animTimeouts = [];
     }
 
-    function updateChips() {
-      chipsTotal.textContent = playerChips;
-    }
-    function updateBetBox() {
-      betBox.textContent = bet;
-    }
+    function updateChips() { chipsTotal.textContent = playerChips; }
+    function updateBetBox() { betBox.textContent = bet; }
 
     function updateBetInfo() {
       betInfo.textContent = bet > 0 ? `Current Bet: ${bet}` : 'Place your bet (Min: 20)';
@@ -653,4 +647,25 @@
       resetGame();
     };
 
-    needMoneyBtn.onclick =
+    needMoneyBtn.onclick = () => {
+      waitingNextHand = false;
+      playerChips += 10000;
+      updateChips();
+      needMoneyBtn.style.display = 'none';
+      resetGame();
+    };
+
+    // Init
+    deck = buildDeck();
+    resetGame();
+
+    document.body.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchstart', function preventZoom(e) {
+      if (e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+  </script>
+</body>
+</html>
