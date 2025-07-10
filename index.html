@@ -2,60 +2,148 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>KaKaReza Black Jack</title>
+  <title>KakaReza BlackJack</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <style>
-    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #232526; box-sizing: border-box; }
-    body { width: 100vw; height: 100vh; min-height: 100vh; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; color: #fff; box-sizing: border-box; position: fixed; left: 0; top: 0; right: 0; bottom: 0; }
-    #fixed-container { position: fixed; left: 0; top: 0; width: 100vw; height: 100dvh; min-height: 100dvh; background: rgba(30,30,30,0.97); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow: hidden; box-sizing: border-box; z-index: 1; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+      background: #0a1833;
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #fff;
+      box-sizing: border-box;
+      position: fixed;
+      left: 0; top: 0; right: 0; bottom: 0;
+    }
+    /* KaKa pattern overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        repeating-linear-gradient(135deg, rgba(32,64,128,0.06) 0 40px, transparent 40px 80px),
+        repeating-linear-gradient(45deg, rgba(32,64,128,0.05) 0 30px, transparent 30px 60px);
+    }
+    #kaka-pattern {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.10;
+      background: repeating-linear-gradient(135deg, #2196f3 0 2px, transparent 2px 48px);
+      mix-blend-mode: lighten;
+    }
+    #fixed-container {
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw;
+      height: 100dvh;
+      min-height: 100dvh;
+      background: rgba(10,24,51,0.97);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: hidden;
+      box-sizing: border-box;
+      z-index: 2;
+    }
     .branding-spacer { height: 7vh; min-height: 40px; width: 100%; flex-shrink: 0; }
-    h1 { text-align: center; font-size: 2.1em; margin: 0 0 4px 0; color: #ffd600; font-weight: bold; letter-spacing: 2px; text-shadow: 1px 1px 6px #000; flex-shrink: 0; }
+    h1 {
+      text-align: center;
+      font-size: 2.1em;
+      margin: 0 0 4px 0;
+      color: #42a5f5;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 6px #000;
+      flex-shrink: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
     #game-area { flex: 1 1 auto; width: 100%; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; min-height: 0; padding: 0; background: none; box-sizing: border-box; max-width: 100vw; overflow: hidden; }
-    .section-title { text-align: center; font-size: 1.1em; margin: 8px 0 0 0; color: #ffd600; font-weight: bold; letter-spacing: 1px; flex-shrink: 0; }
+    .section-title { text-align: center; font-size: 1.1em; margin: 8px 0 0 0; color: #42a5f5; font-weight: bold; letter-spacing: 1px; flex-shrink: 0; }
     .cards-area { display: flex; justify-content: center; align-items: flex-end; min-height: 140px; margin: 0 0 0 0; position: relative; z-index: 2; flex-shrink: 0; }
     .hand { display: flex; align-items: center; margin: 0 8px; position: relative; }
-    .hand-value-side { display: flex; align-items: center; font-size: 1.3em; color: #ffd600; font-weight: bold; margin-left: 12px; text-shadow: 1px 1px 3px #000; min-width: 60px; justify-content: flex-start; white-space: nowrap; background: #222; border-radius: 10px; padding: 8px 18px; border: 2px solid #ffd600; margin-top: 18px; margin-bottom: 8px; box-shadow: 0 2px 8px #0006; }
+    .hand-value-side { display: flex; align-items: center; font-size: 1.3em; color: #42a5f5; font-weight: bold; margin-left: 12px; text-shadow: 1px 1px 3px #000; min-width: 60px; justify-content: flex-start; white-space: nowrap; background: #18294a; border-radius: 10px; padding: 8px 18px; border: 2px solid #42a5f5; margin-top: 18px; margin-bottom: 8px; box-shadow: 0 2px 8px #0006; }
     .card { width: 120px; height: 176px; margin-left: -44px; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px #000a; display: flex; align-items: center; justify-content: center; font-size: 3.8em; font-weight: bold; color: #333; border: 3px solid #333; position: relative; z-index: 1; transition: transform 0.5s cubic-bezier(.4,1.5,.6,1), opacity 0.2s; opacity: 1; }
-    .card.suit-hearts, .card.suit-diamonds { color: #e53935; }
+    .card.suit-hearts, .card.suit-diamonds { color: #1976d2; }
     .card.suit-spades, .card.suit-clubs { color: #222; }
-    .card.back { background: linear-gradient(135deg, #7c4dff 60%, #ff4081 100%); color: transparent; border: 3px solid #fff; }
+    .card.back { background: linear-gradient(135deg, #42a5f5 60%, #1976d2 100%); color: transparent; border: 3px solid #fff; }
     .card.deal-anim { animation: slideInCard 0.35s cubic-bezier(.4,1.5,.6,1); z-index: 2; }
     @keyframes slideInCard { from { transform: translateY(-80px) scale(0.6); opacity: 0.1;} to   { transform: none; opacity: 1;} }
     .card.hit-anim { animation: hitInCard 0.35s cubic-bezier(.4,1.5,.6,1); z-index: 2; }
     @keyframes hitInCard { from { transform: translateY(-120px) scale(0.7); opacity: 0.1;} to   { transform: none; opacity: 1;} }
-    .hand-value { display: none; }
     #actions { display: flex; justify-content: center; margin: 4px 0 0 0; flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
     #actions button { font-size: 1.2em; font-weight: bold; border: none; border-radius: 10px; padding: 16px 30px; margin: 0 4px; min-width: 120px; box-shadow: 0 2px 8px #0004; transition: background 0.2s, transform 0.1s, color 0.2s; cursor: pointer; color: #fff; }
-    #actions .hit-btn { background: #1abc3c; }
-    #actions .stand-btn { background: #1976d2; }
-    #actions .double-btn { background: #ff9800; }
-    #actions .split-btn { background: #8e24aa; }
+    #actions .hit-btn { background: #1976d2; }
+    #actions .stand-btn { background: #0d47a1; }
+    #actions .double-btn { background: #42a5f5; color: #0d47a1; }
+    #actions .split-btn { background: #1e88e5; }
     #actions button:disabled { background: #888; cursor: not-allowed; color: #eee; }
-    #status-message { text-align: center; font-size: 1.1em; min-height: 28px; margin: 14px 0 0 0; color: #ffd600; text-shadow: 1px 1px 4px #000; font-weight: bold; flex-shrink: 0; }
+    #status-message { text-align: center; font-size: 1.1em; min-height: 28px; margin: 14px 0 0 0; color: #42a5f5; text-shadow: 1px 1px 4px #000; font-weight: bold; flex-shrink: 0; }
     #bankroll-bet-row { display: flex; justify-content: center; align-items: flex-start; gap: 18px; margin: 8px 0 0 0; flex-wrap: wrap; width: 100%; }
-    .bankroll-box, .bet-box { background: #181818; border: 2px solid #ffd600; border-radius: 16px; padding: 14px 30px 10px 30px; color: #ffd600; font-size: 1.18em; font-weight: bold; text-align: center; display: flex; flex-direction: column; align-items: center; min-width: 120px; box-shadow: 0 2px 8px #0007; margin-bottom: 4px; }
-    .bankroll-value, .bet-value { background: #222; color: #fff; border-radius: 10px; padding: 7px 18px; font-size: 1.5em; font-weight: bold; margin-top: 6px; margin-bottom: 0; letter-spacing: 1px; border: 1.5px solid #ffd600; min-width: 70px; box-shadow: 0 1px 4px #0006; display: inline-block; }
-    #bottom-controls { width: 100%; background: #232526; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 20; padding-bottom: 8px; box-sizing: border-box; flex-shrink: 0; }
+    .bankroll-box, .bet-box { background: #18294a; border: 2px solid #42a5f5; border-radius: 16px; padding: 14px 30px 10px 30px; color: #42a5f5; font-size: 1.18em; font-weight: bold; text-align: center; display: flex; flex-direction: column; align-items: center; min-width: 120px; box-shadow: 0 2px 8px #0007; margin-bottom: 4px; }
+    .bankroll-value, .bet-value { background: #222d3d; color: #fff; border-radius: 10px; padding: 7px 18px; font-size: 1.5em; font-weight: bold; margin-top: 6px; margin-bottom: 0; letter-spacing: 1px; border: 1.5px solid #42a5f5; min-width: 70px; box-shadow: 0 1px 4px #0006; display: inline-block; }
+    #bottom-controls { width: 100%; background: #0a1833; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 20; padding-bottom: 8px; box-sizing: border-box; flex-shrink: 0; }
     #chips { display: flex; justify-content: center; align-items: center; margin: 0 0 4px 0; flex-wrap: wrap; gap: 14px; pointer-events: auto !important; }
     .chip { width: 56px; height: 56px; border-radius: 50%; border: 4px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; box-shadow: 0 2px 12px #000a; cursor: pointer; transition: transform 0.1s; user-select: none; margin-bottom: 4px; pointer-events: auto !important; }
     .chip:active { transform: scale(1.08); }
-    .chip20 { background: radial-gradient(circle, #ffb300 60%, #ff6f00 100%); color: #fff;}
-    .chip50 { background: radial-gradient(circle, #4caf50 60%, #1b5e20 100%); color: #fff;}
-    .chip100 { background: radial-gradient(circle, #2196f3 60%, #0d47a1 100%); color: #fff;}
-    .chip1000 { background: radial-gradient(circle, #ff4081 60%, #c51162 100%); color: #fff;}
-    #bet-info { text-align: center; font-size: 1.1em; margin: 4px 0 0 0; color: #ffe082; font-weight: bold; letter-spacing: 1px; transition: box-shadow 0.2s, background 0.2s; pointer-events: none; }
-    #bet-info.pulse { animation: pulseBtn 1.1s infinite; background: #ffd60022; border-radius: 12px; box-shadow: 0 0 0 8px #ffd60033; color: #ffd600; pointer-events: none; }
+    .chip20 { background: radial-gradient(circle, #42a5f5 60%, #1976d2 100%); color: #fff;}
+    .chip50 { background: radial-gradient(circle, #1976d2 60%, #0d47a1 100%); color: #fff;}
+    .chip100 { background: radial-gradient(circle, #64b5f6 60%, #1976d2 100%); color: #fff;}
+    .chip1000 { background: radial-gradient(circle, #90caf9 60%, #1565c0 100%); color: #fff;}
+    #bet-info { text-align: center; font-size: 1.1em; margin: 4px 0 0 0; color: #90caf9; font-weight: bold; letter-spacing: 1px; transition: box-shadow 0.2s, background 0.2s; pointer-events: none; }
+    #bet-info.pulse { animation: pulseBtn 1.1s infinite; background: #42a5f522; border-radius: 12px; box-shadow: 0 0 0 8px #42a5f533; color: #42a5f5; pointer-events: none; }
     #bet-controls { display: flex; justify-content: center; align-items: center; margin: 4px 0 0 0; gap: 8px; }
-    #bet-controls button, #next-hand-btn, #need-money-btn { background: #333; color: #fff; font-weight: bold; border: none; border-radius: 8px; font-size: 1em; margin: 0 2px; padding: 12px 18px; cursor: pointer; box-shadow: 0 2px 8px #0008; transition: background 0.2s, transform 0.1s; }
+    #bet-controls button, #next-hand-btn, #need-money-btn { background: #1976d2; color: #fff; font-weight: bold; border: none; border-radius: 8px; font-size: 1em; margin: 0 2px; padding: 12px 18px; cursor: pointer; box-shadow: 0 2px 8px #0008; transition: background 0.2s, transform 0.1s; }
     #bet-controls button:disabled, #next-hand-btn:disabled, #need-money-btn:disabled { background: #888; cursor: not-allowed; }
-    #next-hand-btn, #need-money-btn { background: #ffd600; color: #222; font-size: 1.1em; margin-top: 6px; min-width: 120px; font-weight: bold; }
+    #next-hand-btn, #need-money-btn { background: #42a5f5; color: #0d47a1; font-size: 1.1em; margin-top: 6px; min-width: 120px; font-weight: bold; }
     #deal-btn.pulse, #next-hand-btn.pulse, #need-money-btn.pulse { animation: pulseBtn 1.1s infinite; }
-    @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 #ffd60099; background: #444;} 60% { box-shadow: 0 0 0 10px #ffd60033; background: #ffd600; color: #222;} 100% { box-shadow: 0 0 0 0 #ffd60000; background: #444;} }
-    .win-anim, .lose-anim { position: fixed; left: 50%; top: 45%; transform: translate(-50%, -50%); font-size: 2.5em; font-weight: bold; color: #fff; z-index: 1000; pointer-events: none; animation: showResult 2s cubic-bezier(.4,1.5,.6,1) forwards; text-shadow: 0 2px 12px #000, 0 0 24px #ffd600; opacity: 1; }
-    .win-anim { color: #00e676; text-shadow: 0 2px 12px #000, 0 0 24px #00e676;}
+    @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 #42a5f599; background: #444;} 60% { box-shadow: 0 0 0 10px #42a5f533; background: #42a5f5; color: #0d47a1;} 100% { box-shadow: 0 0 0 0 #42a5f500; background: #444;} }
+    .win-anim, .lose-anim { position: fixed; left: 50%; top: 45%; transform: translate(-50%, -50%); font-size: 2.5em; font-weight: bold; color: #fff; z-index: 1000; pointer-events: none; animation: showResult 2s cubic-bezier(.4,1.5,.6,1) forwards; text-shadow: 0 2px 12px #000, 0 0 24px #42a5f5; opacity: 1; }
+    .win-anim { color: #42a5f5; text-shadow: 0 2px 12px #000, 0 0 24px #42a5f5;}
     .lose-anim { color: #ff5252; text-shadow: 0 2px 12px #000, 0 0 24px #ff5252;}
     @keyframes showResult { 0% { opacity: 0; transform: translate(-50%, -80%) scale(0.7);} 10% { opacity: 1; transform: translate(-50%, -50%) scale(1.07);} 80% { opacity: 1; transform: translate(-50%, -50%) scale(1);} 100% { opacity: 0; transform: translate(-50%, -20%) scale(0.7);} }
-    #need-money-btn { display: none; margin: 12px auto 0 auto; padding: 16px 30px; font-size: 1.2em; background: #ff4081; color: #fff; border-radius: 14px; box-shadow: 0 2px 12px #0005; border: 2px solid #ffd600; font-weight: bold; letter-spacing: 1px; z-index: 1001; position: relative; }
+    /* $$$ icon button */
+    #refill-btn {
+      position: fixed;
+      top: 12px;
+      right: 18px;
+      z-index: 1002;
+      background: #1565c0;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 54px;
+      height: 54px;
+      font-size: 2em;
+      font-weight: bold;
+      box-shadow: 0 2px 10px #0006;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      opacity: 0.92;
+      outline: none;
+      user-select: none;
+    }
+    #refill-btn:active { background: #42a5f5; }
+    #refill-btn.disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
     @media (max-width: 600px), (max-height: 800px) {
       .branding-spacer { height: 36px; min-height: 36px; }
       .card { width: 80px; height: 116px; font-size: 2.2em; margin-left: -28px; }
@@ -66,13 +154,15 @@
       .bankroll-box, .bet-box { min-width: 90px; padding: 8px 12px 4px 12px; font-size: 1em;}
       .bankroll-value, .bet-value { font-size: 1.1em; min-width: 48px; padding: 4px 10px;}
       .hand-value-side { font-size: 1em; min-width: 38px; padding: 4px 8px;}
+      #refill-btn { width: 40px; height: 40px; font-size: 1.3em;}
     }
   </style>
 </head>
 <body>
+  <div id="kaka-pattern"></div>
   <div id="fixed-container">
     <div class="branding-spacer"></div>
-    <h1>KaKaReza Black Jack</h1>
+    <h1>KakaReza BlackJack</h1>
     <div id="game-area">
       <div class="section-title">Dealer</div>
       <div class="cards-area" id="dealer-cards-container"></div>
@@ -87,7 +177,6 @@
           <span class="bet-value" id="current-bet-value">0</span>
         </div>
       </div>
-      <button id="need-money-btn">KaKa I need more money</button>
     </div>
     <div id="bottom-controls">
       <div id="chips">
@@ -105,9 +194,10 @@
       <button id="next-hand-btn" style="display:none;">Next Hand</button>
     </div>
   </div>
+  <button id="refill-btn" title="Get 10,000 chips" aria-label="Get 10,000 chips">💲💲</button>
   <div id="result-anim" style="display:none;"></div>
   <script>
-    // Suits and values
+    // --- Game logic: identical to your working version, with only refill button added ---
     const SUITS = ['hearts', 'diamonds', 'spades', 'clubs'];
     const VALUES = [
       {name: 'A', value: 11},
@@ -124,26 +214,8 @@
       {name: 'Q', value: 10},
       {name: 'K', value: 10}
     ];
-
-    // Game state
-    let playerChips = 5000;
-    let bet = 0;
-    let lastBet = 0;
-    let deck = [];
-    let playerHands = [];
-    let currentHandIdx = 0;
-    let dealerHand = [];
-    let inPlay = false;
-    let canSplit = false;
-    let canDouble = false;
-    let splitActive = false;
-    let playerBlackjack = false;
-    let dealerBlackjack = false;
-    let handResults = [];
-    let animTimeouts = [];
-    let waitingNextHand = false;
-
-    // DOM
+    let playerChips = 5000, bet = 0, lastBet = 0, deck = [], playerHands = [], currentHandIdx = 0, dealerHand = [];
+    let inPlay = false, canSplit = false, canDouble = false, splitActive = false, playerBlackjack = false, dealerBlackjack = false, handResults = [], animTimeouts = [], waitingNextHand = false;
     const chipsTotal = document.getElementById('chips-total');
     const chipsArea = document.getElementById('chips');
     const betInfo = document.getElementById('bet-info');
@@ -158,517 +230,211 @@
     const bankrollBox = document.getElementById('chips-total');
     const betBox = document.getElementById('current-bet-value');
     const resultAnim = document.getElementById('result-anim');
-    const needMoneyBtn = document.getElementById('need-money-btn');
-
+    const refillBtn = document.getElementById('refill-btn');
+    // --- The rest of the blackjack logic is unchanged from your working version ---
     function buildDeck() {
       let d = [];
-      for (let n = 0; n < 8; n++) {
-        for (const s of SUITS) {
-          for (const v of VALUES) {
-            d.push({suit: s, name: v.name, value: v.value});
-          }
-        }
-      }
-      for (let i = d.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [d[i], d[j]] = [d[j], d[i]];
-      }
+      for (let n = 0; n < 8; n++) for (const s of SUITS) for (const v of VALUES) d.push({suit: s, name: v.name, value: v.value});
+      for (let i = d.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; }
       return d;
     }
-
     function handValue(hand) {
       let total = 0, aces = 0;
-      for (const card of hand) {
-        total += card.value;
-        if (card.name === 'A') aces++;
-      }
-      while (total > 21 && aces > 0) {
-        total -= 10;
-        aces--;
-      }
+      for (const card of hand) { total += card.value; if (card.name === 'A') aces++; }
+      while (total > 21 && aces > 0) { total -= 10; aces--; }
       return total;
     }
-
-    function isBlackjack(hand) {
-      return hand.length === 2 && handValue(hand) === 21;
-    }
-
-    function isPair(hand) {
-      return hand.length === 2 && hand[0].name === hand[1].name;
-    }
-
-    function canSplitHand(hand) {
-      return isPair(hand) && playerChips >= bet && playerHands.length < 2;
-    }
-
-    function canDoubleDown(hand) {
-      return hand.length === 2 && playerChips >= bet;
-    }
-
+    function isBlackjack(hand) { return hand.length === 2 && handValue(hand) === 21; }
+    function isPair(hand) { return hand.length === 2 && hand[0].name === hand[1].name; }
+    function canSplitHand(hand) { return isPair(hand) && playerChips >= bet && playerHands.length < 2; }
+    function canDoubleDown(hand) { return hand.length === 2 && playerChips >= bet; }
     function resetGame() {
-      clearTimeouts();
-      bet = 0;
-      playerHands = [];
-      currentHandIdx = 0;
-      dealerHand = [];
-      inPlay = false;
-      canSplit = false;
-      canDouble = false;
-      splitActive = false;
-      playerBlackjack = false;
-      dealerBlackjack = false;
-      handResults = [];
+      clearTimeouts(); bet = 0; playerHands = []; currentHandIdx = 0; dealerHand = [];
+      inPlay = false; canSplit = false; canDouble = false; splitActive = false;
+      playerBlackjack = false; dealerBlackjack = false; handResults = [];
       waitingNextHand = false;
-      updateChips();
-      updateBetInfo();
-      renderHands();
-      renderActions();
-      statusMsg.textContent = '';
-      nextHandBtn.style.display = 'none';
-      nextHandBtn.classList.remove('pulse');
-      resultAnim.style.display = 'none';
-      enableBetting(true);
-      dealBtn.classList.add('pulse');
-      dealBtn.disabled = true;
-      betInfo.classList.add('pulse');
-      updateBetBox();
-      needMoneyBtn.style.display = 'none';
-      checkRefillButton();
+      updateChips(); updateBetInfo(); renderHands(); renderActions();
+      statusMsg.textContent = ''; nextHandBtn.style.display = 'none'; nextHandBtn.classList.remove('pulse');
+      resultAnim.style.display = 'none'; enableBetting(true); dealBtn.classList.add('pulse'); dealBtn.disabled = true;
+      betInfo.classList.add('pulse'); updateBetBox();
     }
-
-    function clearTimeouts() {
-      for (const t of animTimeouts) clearTimeout(t);
-      animTimeouts = [];
-    }
-
+    function clearTimeouts() { for (const t of animTimeouts) clearTimeout(t); animTimeouts = []; }
     function updateChips() { chipsTotal.textContent = playerChips; }
     function updateBetBox() { betBox.textContent = bet; }
-
     function updateBetInfo() {
       betInfo.textContent = bet > 0 ? `Current Bet: ${bet}` : 'Place your bet (Min: 20)';
       updateBetBox();
-      if (bet === 0 && !inPlay && !waitingNextHand) {
-        betInfo.classList.add('pulse');
-        dealBtn.classList.remove('pulse');
-        dealBtn.disabled = true;
-      } else if (bet >= 20 && !inPlay && !waitingNextHand) {
-        betInfo.classList.remove('pulse');
-        dealBtn.classList.add('pulse');
-        dealBtn.disabled = false;
-      } else {
-        betInfo.classList.remove('pulse');
-        dealBtn.classList.remove('pulse');
-        dealBtn.disabled = true;
-      }
+      if (bet === 0 && !inPlay && !waitingNextHand) { betInfo.classList.add('pulse'); dealBtn.classList.remove('pulse'); dealBtn.disabled = true; }
+      else if (bet >= 20 && !inPlay && !waitingNextHand) { betInfo.classList.remove('pulse'); dealBtn.classList.add('pulse'); dealBtn.disabled = false; }
+      else { betInfo.classList.remove('pulse'); dealBtn.classList.remove('pulse'); dealBtn.disabled = true; }
     }
-
     function renderHands(showDealerHole = false, anim = false, hitIdx = null) {
       dealerCardsContainer.innerHTML = '';
-      let dealerHandDiv = document.createElement('div');
-      dealerHandDiv.className = 'hand';
+      let dealerHandDiv = document.createElement('div'); dealerHandDiv.className = 'hand';
       dealerHand.forEach((card, idx) => {
-        let cardDiv = document.createElement('div');
-        cardDiv.className = 'card suit-' + card.suit;
+        let cardDiv = document.createElement('div'); cardDiv.className = 'card suit-' + card.suit;
         if (idx === 1 && !showDealerHole && inPlay) cardDiv.classList.add('back');
         else cardDiv.innerHTML = getCardSymbol(card);
-        if (anim && idx === dealerHand.length - 1 && hitIdx === 'dealer') {
-          cardDiv.classList.add('hit-anim');
-        } else if (anim && dealerHand.length <= 2) {
-          cardDiv.classList.add('deal-anim');
-        }
+        if (anim && idx === dealerHand.length - 1 && hitIdx === 'dealer') cardDiv.classList.add('hit-anim');
+        else if (anim && dealerHand.length <= 2) cardDiv.classList.add('deal-anim');
         dealerHandDiv.appendChild(cardDiv);
       });
-      let dealerValDiv = document.createElement('div');
-      dealerValDiv.className = 'hand-value-side';
+      let dealerValDiv = document.createElement('div'); dealerValDiv.className = 'hand-value-side';
       dealerValDiv.textContent = (showDealerHole || !inPlay) ? handValue(dealerHand) : '';
-      dealerHandDiv.appendChild(dealerValDiv);
-      dealerCardsContainer.appendChild(dealerHandDiv);
+      dealerHandDiv.appendChild(dealerValDiv); dealerCardsContainer.appendChild(dealerHandDiv);
 
       playerCardsContainer.innerHTML = '';
-      let playerHandDiv = document.createElement('div');
-      playerHandDiv.className = 'hand';
-      playerHands[0].forEach((card, idx) => {
-        let cardDiv = document.createElement('div');
-        cardDiv.className = 'card suit-' + card.suit;
+      let playerHandDiv = document.createElement('div'); playerHandDiv.className = 'hand';
+      playerHands[0]?.forEach((card, idx) => {
+        let cardDiv = document.createElement('div'); cardDiv.className = 'card suit-' + card.suit;
         cardDiv.innerHTML = getCardSymbol(card);
-        if (anim && idx === playerHands[0].length - 1 && hitIdx === 'player') {
-          cardDiv.classList.add('hit-anim');
-        } else if (anim && playerHands[0].length <= 2) {
-          cardDiv.classList.add('deal-anim');
-        }
+        if (anim && idx === playerHands[0].length - 1 && hitIdx === 'player') cardDiv.classList.add('hit-anim');
+        else if (anim && playerHands[0].length <= 2) cardDiv.classList.add('deal-anim');
         playerHandDiv.appendChild(cardDiv);
       });
-      let playerValDiv = document.createElement('div');
-      playerValDiv.className = 'hand-value-side';
-      playerValDiv.textContent = handValue(playerHands[0]);
-      playerHandDiv.appendChild(playerValDiv);
-      playerCardsContainer.appendChild(playerHandDiv);
+      let playerValDiv = document.createElement('div'); playerValDiv.className = 'hand-value-side';
+      playerValDiv.textContent = playerHands[0] ? handValue(playerHands[0]) : '';
+      playerHandDiv.appendChild(playerValDiv); playerCardsContainer.appendChild(playerHandDiv);
     }
-
     function renderActions() {
       actionsArea.innerHTML = '';
       if (!inPlay) return;
       let hand = playerHands[currentHandIdx];
-      let hitBtn = document.createElement('button');
-      hitBtn.textContent = 'Hit';
-      hitBtn.className = 'hit-btn';
-      hitBtn.onclick = () => playerHit();
-      actionsArea.appendChild(hitBtn);
-      let standBtn = document.createElement('button');
-      standBtn.textContent = 'Stand';
-      standBtn.className = 'stand-btn';
-      standBtn.onclick = () => playerStand();
-      actionsArea.appendChild(standBtn);
-      if (canDoubleDown(hand)) {
-        let dblBtn = document.createElement('button');
-        dblBtn.textContent = 'Double Down';
-        dblBtn.className = 'double-btn';
-        dblBtn.onclick = () => playerDouble();
-        actionsArea.appendChild(dblBtn);
-      }
-      if (canSplitHand(hand)) {
-        let splitBtn = document.createElement('button');
-        splitBtn.textContent = 'Split';
-        splitBtn.className = 'split-btn';
-        splitBtn.onclick = () => playerSplit();
-        actionsArea.appendChild(splitBtn);
-      }
+      let hitBtn = document.createElement('button'); hitBtn.textContent = 'Hit'; hitBtn.className = 'hit-btn'; hitBtn.onclick = () => playerHit(); actionsArea.appendChild(hitBtn);
+      let standBtn = document.createElement('button'); standBtn.textContent = 'Stand'; standBtn.className = 'stand-btn'; standBtn.onclick = () => playerStand(); actionsArea.appendChild(standBtn);
+      if (canDoubleDown(hand)) { let dblBtn = document.createElement('button'); dblBtn.textContent = 'Double Down'; dblBtn.className = 'double-btn'; dblBtn.onclick = () => playerDouble(); actionsArea.appendChild(dblBtn); }
+      if (canSplitHand(hand)) { let splitBtn = document.createElement('button'); splitBtn.textContent = 'Split'; splitBtn.className = 'split-btn'; splitBtn.onclick = () => playerSplit(); actionsArea.appendChild(splitBtn); }
     }
-
-    function getCardSymbol(card) {
-      let suitSym = {
-        'hearts': '♥',
-        'diamonds': '♦',
-        'spades': '♠',
-        'clubs': '♣'
-      }[card.suit];
-      return card.name + suitSym;
-    }
-
-    function dealCard(toHand, anim = true) {
-      if (deck.length < 20) deck = buildDeck();
-      let card = deck.pop();
-      toHand.push(card);
-    }
-
+    function getCardSymbol(card) { let suitSym = {'hearts':'♥','diamonds':'♦','spades':'♠','clubs':'♣'}[card.suit]; return card.name + suitSym; }
+    function dealCard(toHand, anim = true) { if (deck.length < 20) deck = buildDeck(); let card = deck.pop(); toHand.push(card); }
     function enableBetting(val) {
       let chips = document.querySelectorAll('.chip');
       let chipsParent = document.getElementById('chips');
       chips.forEach(c => c.style.pointerEvents = val ? 'auto' : 'none');
       chipsParent.style.pointerEvents = val ? 'auto' : 'none';
-      clearBetBtn.disabled = !val;
-      redoBetBtn.disabled = !val;
+      clearBetBtn.disabled = !val; redoBetBtn.disabled = !val;
       dealBtn.disabled = !val || bet < 20;
-      if (val && bet >= 20) {
-        dealBtn.classList.add('pulse');
-      } else {
-        dealBtn.classList.remove('pulse');
-      }
+      if (val && bet >= 20) dealBtn.classList.add('pulse');
+      else dealBtn.classList.remove('pulse');
     }
-
-    function checkRefillButton() {
-      if (playerChips < 20) {
-        enableBetting(false);
-        needMoneyBtn.style.display = '';
-        needMoneyBtn.classList.add('pulse');
-      } else {
-        needMoneyBtn.style.display = 'none';
-        needMoneyBtn.classList.remove('pulse');
-      }
-    }
-
     chipsArea.onclick = (e) => {
       if (!e.target.classList.contains('chip')) return;
       if (inPlay || waitingNextHand) return;
-      if (playerChips < 20) {
-        checkRefillButton();
-        return;
-      }
+      if (playerChips < 20) return;
       let val = parseInt(e.target.getAttribute('data-value'));
       if (bet + val > playerChips) return;
       bet += val;
       updateBetInfo();
-      if (bet >= 20) {
-        dealBtn.disabled = false;
-        dealBtn.classList.add('pulse');
-      }
+      if (bet >= 20) { dealBtn.disabled = false; dealBtn.classList.add('pulse'); }
     };
-
-    clearBetBtn.onclick = () => {
-      if (inPlay || waitingNextHand) return;
-      bet = 0;
-      updateBetInfo();
-      dealBtn.disabled = true;
-      dealBtn.classList.remove('pulse');
-    };
-
-    redoBetBtn.onclick = () => {
-      if (inPlay || waitingNextHand) return;
-      if (lastBet > 0 && lastBet <= playerChips) {
-        bet = lastBet;
-        updateBetInfo();
-        if (bet >= 20) {
-          dealBtn.disabled = false;
-          dealBtn.classList.add('pulse');
-        }
-      }
-    };
-
-    dealBtn.onclick = () => {
-      if (inPlay || bet < 20 || bet > playerChips || waitingNextHand) return;
-      dealBtn.classList.remove('pulse');
-      betInfo.classList.remove('pulse');
-      dealBtn.disabled = true;
-      startHand();
-    };
-
+    clearBetBtn.onclick = () => { if (inPlay || waitingNextHand) return; bet = 0; updateBetInfo(); dealBtn.disabled = true; dealBtn.classList.remove('pulse'); };
+    redoBetBtn.onclick = () => { if (inPlay || waitingNextHand) return; if (lastBet > 0 && lastBet <= playerChips) { bet = lastBet; updateBetInfo(); if (bet >= 20) { dealBtn.disabled = false; dealBtn.classList.add('pulse'); } } };
+    dealBtn.onclick = () => { if (inPlay || bet < 20 || bet > playerChips || waitingNextHand) return; dealBtn.classList.remove('pulse'); betInfo.classList.remove('pulse'); dealBtn.disabled = true; startHand(); };
     function startHand() {
-      clearTimeouts();
-      inPlay = true;
-      playerBlackjack = false;
-      dealerBlackjack = false;
-      playerHands = [[]];
-      currentHandIdx = 0;
-      dealerHand = [];
-      playerChips -= bet;
-      lastBet = bet;
-      updateChips();
-      updateBetInfo();
-      enableBetting(false);
-      renderHands(false, true);
-      setTimeout(() => {
-        dealCard(playerHands[0]);
-        renderHands(false, true);
-        animTimeouts.push(setTimeout(() => {
-          dealCard(dealerHand);
-          renderHands(false, true);
-          animTimeouts.push(setTimeout(() => {
-            dealCard(playerHands[0]);
-            renderHands(false, true);
-            animTimeouts.push(setTimeout(() => {
-              dealCard(dealerHand);
-              renderHands(false, true);
-              afterInitialDeal();
-            }, 350));
+      clearTimeouts(); inPlay = true; playerBlackjack = false; dealerBlackjack = false; playerHands = [[]]; currentHandIdx = 0; dealerHand = [];
+      playerChips -= bet; lastBet = bet; updateChips(); updateBetInfo(); enableBetting(false); renderHands(false, true);
+      setTimeout(() => { dealCard(playerHands[0]); renderHands(false, true);
+        animTimeouts.push(setTimeout(() => { dealCard(dealerHand); renderHands(false, true);
+          animTimeouts.push(setTimeout(() => { dealCard(playerHands[0]); renderHands(false, true);
+            animTimeouts.push(setTimeout(() => { dealCard(dealerHand); renderHands(false, true); afterInitialDeal(); }, 350));
           }, 350));
         }, 350));
       }, 350);
     }
-
     function afterInitialDeal() {
       canSplit = canSplitHand(playerHands[0]);
       canDouble = canDoubleDown(playerHands[0]);
       playerBlackjack = isBlackjack(playerHands[0]);
       dealerBlackjack = isBlackjack(dealerHand);
-
-      renderHands(false);
-      renderActions();
-
-      if (playerBlackjack || dealerBlackjack) {
-        setTimeout(() => finishHand(), 700);
-      } else {
-        statusMsg.textContent = 'Your move!';
-      }
+      renderHands(false); renderActions();
+      if (playerBlackjack || dealerBlackjack) setTimeout(() => finishHand(), 700);
+      else statusMsg.textContent = 'Your move!';
     }
-
     function playerHit() {
-      let hand = playerHands[currentHandIdx];
-      dealCard(hand);
+      let hand = playerHands[currentHandIdx]; dealCard(hand);
       renderHands(false, false, 'player');
       let cards = playerCardsContainer.querySelectorAll('.card');
-      if (cards.length) {
-        cards[cards.length - 2]?.classList.remove('hit-anim', 'deal-anim');
-        cards[cards.length - 1]?.classList.add('hit-anim');
-      }
-      setTimeout(() => {
-        renderHands(false);
-        if (handValue(hand) > 21) {
-          statusMsg.textContent = 'Busted!';
-          setTimeout(() => nextHandOrFinish(), 700);
-        } else {
-          renderActions();
-        }
-      }, 350);
+      if (cards.length) { cards[cards.length - 2]?.classList.remove('hit-anim', 'deal-anim'); cards[cards.length - 1]?.classList.add('hit-anim'); }
+      setTimeout(() => { renderHands(false); if (handValue(hand) > 21) { statusMsg.textContent = 'Busted!'; setTimeout(() => nextHandOrFinish(), 700); } else renderActions(); }, 350);
     }
-
-    function playerStand() {
-      nextHandOrFinish();
-    }
-
+    function playerStand() { nextHandOrFinish(); }
     function playerDouble() {
       if (playerChips < bet) return;
-      playerChips -= bet;
-      updateChips();
-      let hand = playerHands[currentHandIdx];
-      dealCard(hand);
-      renderHands(false, false, 'player');
+      playerChips -= bet; updateChips();
+      let hand = playerHands[currentHandIdx]; dealCard(hand); renderHands(false, false, 'player');
       let cards = playerCardsContainer.querySelectorAll('.card');
-      if (cards.length) {
-        cards[cards.length - 2]?.classList.remove('hit-anim', 'deal-anim');
-        cards[cards.length - 1]?.classList.add('hit-anim');
-      }
-      setTimeout(() => {
-        renderHands(false);
-        nextHandOrFinish();
-      }, 350);
+      if (cards.length) { cards[cards.length - 2]?.classList.remove('hit-anim', 'deal-anim'); cards[cards.length - 1]?.classList.add('hit-anim'); }
+      setTimeout(() => { renderHands(false); nextHandOrFinish(); }, 350);
     }
-
     function playerSplit() {
       if (!canSplitHand(playerHands[currentHandIdx])) return;
       if (playerChips < bet) return;
-      playerChips -= bet;
-      updateChips();
-      let hand = playerHands[currentHandIdx];
-      let newHand = [hand.pop()];
-      playerHands.push(newHand);
-      dealCard(hand);
-      dealCard(newHand);
-      renderHands(false, true);
-      setTimeout(() => {
-        renderHands(false);
-        renderActions();
-      }, 350);
+      playerChips -= bet; updateChips();
+      let hand = playerHands[currentHandIdx]; let newHand = [hand.pop()];
+      playerHands.push(newHand); dealCard(hand); dealCard(newHand); renderHands(false, true);
+      setTimeout(() => { renderHands(false); renderActions(); }, 350);
     }
-
     function nextHandOrFinish() {
-      if (currentHandIdx < playerHands.length - 1) {
-        currentHandIdx++;
-        renderHands(false);
-        renderActions();
-        statusMsg.textContent = 'Next hand!';
-      } else {
-        finishHand();
-      }
+      if (currentHandIdx < playerHands.length - 1) { currentHandIdx++; renderHands(false); renderActions(); statusMsg.textContent = 'Next hand!'; }
+      else finishHand();
     }
-
-    function finishHand() {
-      inPlay = false;
-      renderActions();
-      renderHands(true);
-      setTimeout(() => dealerPlay(), 650);
-    }
-
+    function finishHand() { inPlay = false; renderActions(); renderHands(true); setTimeout(() => dealerPlay(), 650); }
     function dealerPlay() {
       let dealerAnim = () => {
         if (handValue(dealerHand) < 17 || (handValue(dealerHand) === 17 && hasSoft17(dealerHand))) {
-          dealCard(dealerHand);
-          renderHands(true, false, 'dealer');
+          dealCard(dealerHand); renderHands(true, false, 'dealer');
           let cards = dealerCardsContainer.querySelectorAll('.card');
-          if (cards.length) {
-            cards[cards.length - 2]?.classList.remove('hit-anim', 'deal-anim');
-            cards[cards.length - 1]?.classList.add('hit-anim');
-          }
+          if (cards.length) { cards[cards.length - 2]?.classList.remove('hit-anim', 'deal-anim'); cards[cards.length - 1]?.classList.add('hit-anim'); }
           setTimeout(dealerAnim, 350);
-        } else {
-          renderHands(true);
-          setTimeout(() => settleBets(), 700);
-        }
+        } else { renderHands(true); setTimeout(() => settleBets(), 700); }
       };
       dealerAnim();
     }
-
     function hasSoft17(hand) {
       let total = 0, aces = 0;
-      for (const card of hand) {
-        total += card.value;
-        if (card.name === 'A') aces++;
-      }
+      for (const card of hand) { total += card.value; if (card.name === 'A') aces++; }
       return total === 17 && aces > 0;
     }
-
     function showResultAnimation(type) {
       resultAnim.className = type === 'win' ? 'win-anim' : 'lose-anim';
       resultAnim.textContent = type === 'win' ? 'You Win!' : 'You Lose!';
       resultAnim.style.display = '';
-      setTimeout(() => {
-        resultAnim.style.display = 'none';
-      }, 2000);
+      setTimeout(() => { resultAnim.style.display = 'none'; }, 2000);
     }
-
     function settleBets() {
       let dealerVal = handValue(dealerHand);
-      let messages = [];
-      let totalWin = 0;
-      let winAnim = false, loseAnim = false;
+      let messages = [], totalWin = 0, winAnim = false, loseAnim = false;
       for (let i = 0; i < playerHands.length; i++) {
-        let hand = playerHands[i];
-        let val = handValue(hand);
-        let win = 0;
-        let msg = '';
+        let hand = playerHands[i], val = handValue(hand), win = 0, msg = '';
         if (isBlackjack(hand)) {
-          if (isBlackjack(dealerHand)) {
-            win = bet;
-            msg = 'Push (Both Blackjack)';
-          } else {
-            win = bet * 2;
-            msg = 'Blackjack! You win 2x!';
-            winAnim = true;
-          }
-        } else if (val > 21) {
-          win = 0;
-          msg = 'Busted!';
-          loseAnim = true;
-        } else if (dealerVal > 21) {
-          win = bet * 2;
-          msg = 'Dealer busts! You win!';
-          winAnim = true;
-        } else if (val > dealerVal) {
-          win = bet * 2;
-          msg = 'You win!';
-          winAnim = true;
-        } else if (val === dealerVal) {
-          win = bet;
-          msg = 'Push!';
-        } else {
-          win = 0;
-          msg = 'You lose!';
-          loseAnim = true;
-        }
-        playerChips += win;
-        totalWin += win;
-        messages.push(`Hand ${playerHands.length > 1 ? (i+1) + ': ' : ''}${msg}`);
+          if (isBlackjack(dealerHand)) { win = bet; msg = 'Push (Both Blackjack)'; }
+          else { win = bet * 2; msg = 'Blackjack! You win 2x!'; winAnim = true; }
+        } else if (val > 21) { win = 0; msg = 'Busted!'; loseAnim = true; }
+        else if (dealerVal > 21) { win = bet * 2; msg = 'Dealer busts! You win!'; winAnim = true; }
+        else if (val > dealerVal) { win = bet * 2; msg = 'You win!'; winAnim = true; }
+        else if (val === dealerVal) { win = bet; msg = 'Push!'; }
+        else { win = 0; msg = 'You lose!'; loseAnim = true; }
+        playerChips += win; totalWin += win; messages.push(`Hand ${playerHands.length > 1 ? (i+1) + ': ' : ''}${msg}`);
       }
-      updateChips();
-      updateBetBox();
-      statusMsg.textContent = messages.join(' | ');
-      if (winAnim) showResultAnimation('win');
-      else if (loseAnim) showResultAnimation('lose');
-      checkRefillButton();
+      updateChips(); updateBetBox(); statusMsg.textContent = messages.join(' | ');
+      if (winAnim) showResultAnimation('win'); else if (loseAnim) showResultAnimation('lose');
       if (playerChips >= 20) {
-        setTimeout(() => {
-          nextHandBtn.style.display = '';
-          nextHandBtn.classList.add('pulse');
-          waitingNextHand = true;
-        }, 200);
+        setTimeout(() => { nextHandBtn.style.display = ''; nextHandBtn.classList.add('pulse'); waitingNextHand = true; }, 200);
       }
       enableBetting(false);
     }
-
-    nextHandBtn.onclick = () => {
-      waitingNextHand = false;
-      nextHandBtn.classList.remove('pulse');
-      nextHandBtn.style.display = 'none';
-      resetGame();
+    nextHandBtn.onclick = () => { waitingNextHand = false; nextHandBtn.classList.remove('pulse'); nextHandBtn.style.display = 'none'; resetGame(); };
+    refillBtn.onclick = () => {
+      if (playerChips < 20) {
+        playerChips += 10000;
+        updateChips();
+        resetGame();
+      }
     };
-
-    needMoneyBtn.onclick = () => {
-      waitingNextHand = false;
-      playerChips += 10000;
-      updateChips();
-      needMoneyBtn.style.display = 'none';
-      resetGame();
-    };
-
     deck = buildDeck();
     resetGame();
-
-    document.body.addEventListener('touchmove', function(e) {
-      e.preventDefault();
-    }, { passive: false });
-
-    document.addEventListener('touchstart', function preventZoom(e) {
-      if (e.touches.length > 1) e.preventDefault();
-    }, { passive: false });
+    document.body.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener('touchstart', function preventZoom(e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
   </script>
 </body>
 </html>
