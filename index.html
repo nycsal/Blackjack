@@ -85,7 +85,7 @@
       overflow: hidden;
     }
     .card .card-rank {
-      font-size: 2.2em; /* Even larger for visibility */
+      font-size: 2.2em;
       font-weight: bold;
       line-height: 1;
       color: inherit;
@@ -103,7 +103,6 @@
     @keyframes slideInCard { from { transform: translateY(-68px) scale(0.6); opacity: 0.1;} to   { transform: none; opacity: 1;} }
     .card.hit-anim { animation: hitInCard 0.35s cubic-bezier(.4,1.5,.6,1); z-index: 2; }
     @keyframes hitInCard { from { transform: translateY(-102px) scale(0.7); opacity: 0.1;} to   { transform: none; opacity: 1;} }
-    /* --- ACTION BUTTONS --- */
     #actions-bar {
       width: 100%;
       display: flex;
@@ -114,7 +113,7 @@
       z-index: 3;
     }
     #actions-bar button {
-      width: 129px; /* 112px * 1.15 = 128.8px */
+      width: 129px;
       height: 68px;
       min-width: 0;
       min-height: 0;
@@ -159,7 +158,6 @@
       100% { box-shadow: 0 0 0 0 #ffd60000, 0 2px 10px #0006; }
     }
     #status-message { text-align: center; font-size: 1.1em; min-height: 28px; margin: 14px 0 0 0; color: #42a5f5; text-shadow: 1px 1px 4px #000; font-weight: bold; flex-shrink: 0; }
-    /* --- BANKROLL/BET BOXES 15% LARGER, NO INSIDE BORDER --- */
     #bankroll-bet-row {
       display: flex;
       justify-content: center;
@@ -199,7 +197,6 @@
       min-width: 70px;
       box-shadow: 0 1px 4px #0006;
       display: inline-block;
-      /* No border */
     }
     #bottom-controls { width: 100%; background: #0a1833; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 20; padding-bottom: 8px; box-sizing: border-box; flex-shrink: 0; }
     #chips {
@@ -472,7 +469,6 @@
     }
     function renderActions() {
       actionsBar.innerHTML = '';
-      // Always render all buttons, but disable if not actionable
       let hand = playerHands[0] || [];
       let hitBtn = document.createElement('button'); hitBtn.textContent = 'Hit'; hitBtn.className = 'hit-btn';
       let standBtn = document.createElement('button'); standBtn.textContent = 'Stay'; standBtn.className = 'stand-btn';
@@ -515,18 +511,15 @@
       let standBtn = actionsBar.querySelector('.stand-btn');
       let doubleBtn = actionsBar.querySelector('.double-btn');
       let splitBtn = actionsBar.querySelector('.split-btn');
-      // Remove all pulses first
       chips.forEach(c => c.classList.remove('pulse'));
       dealBtn.classList.remove('pulse');
       reloadBtn.classList.remove('pulse');
       actionButtons.forEach(b => b.classList.remove('pulse'));
       nextHandBtn.classList.remove('pulse');
-      // Out of money: pulse reload
       if (playerChips < 20) {
         reloadBtn.classList.add('pulse');
         return;
       }
-      // Not in play and not waiting for next hand: pulse chips or deal
       if (!inPlay && !waitingNextHand && bet === 0) {
         chips.forEach(c => c.classList.add('pulse'));
         return;
@@ -535,14 +528,11 @@
         dealBtn.classList.add('pulse');
         return;
       }
-      // Next hand: pulse next hand and deal (if both visible)
       if (waitingNextHand) {
         nextHandBtn.style.display = '';
         nextHandBtn.classList.add('pulse');
-        dealBtn.classList.add('pulse');
         return;
       }
-      // In play: pulse only possible action buttons
       if (inPlay && !waitingNextHand) {
         if (hitBtn && !hitBtn.disabled) hitBtn.classList.add('pulse');
         if (standBtn && !standBtn.disabled) standBtn.classList.add('pulse');
@@ -588,16 +578,22 @@
       renderHands(false, false, 'player');
       let cards = playerCardsContainer.querySelectorAll('.card');
       if (cards.length) { cards[cards.length - 2]?.classList.remove('hit-anim', 'deal-anim'); cards[cards.length - 1]?.classList.add('hit-anim'); }
-      setTimeout(() => { renderHands(false); if (handValue(hand) > 21) { statusMsg.textContent = 'Busted!'; setTimeout(() => nextHandOrFinish(), 700); } else renderActions(); }, 350);
+      setTimeout(() => {
+        renderHands(false);
+        if (handValue(hand) > 21) {
+          statusMsg.textContent = 'Busted!';
+          setTimeout(() => finishHand(), 700);
+        } else renderActions();
+      }, 350);
     }
-    function playerStand() { nextHandOrFinish(); }
+    function playerStand() { finishHand(); }
     function playerDouble() {
       if (playerChips < bet) return;
       playerChips -= bet; updateChips();
       let hand = playerHands[currentHandIdx]; dealCard(hand); renderHands(false, false, 'player');
       let cards = playerCardsContainer.querySelectorAll('.card');
       if (cards.length) { cards[cards.length - 2]?.classList.remove('hit-anim', 'deal-anim'); cards[cards.length - 1]?.classList.add('hit-anim'); }
-      setTimeout(() => { renderHands(false); nextHandOrFinish(); }, 350);
+      setTimeout(() => { renderHands(false); finishHand(); }, 350);
     }
     function playerSplit() {
       if (!canSplitHand(playerHands[currentHandIdx])) return;
@@ -607,11 +603,12 @@
       playerHands.push(newHand); dealCard(hand); dealCard(newHand); renderHands(false, true);
       setTimeout(() => { renderHands(false); renderActions(); }, 350);
     }
-    function nextHandOrFinish() {
-      if (currentHandIdx < playerHands.length - 1) { currentHandIdx++; renderHands(false); renderActions(); statusMsg.textContent = 'Next hand!'; }
-      else finishHand();
+    function finishHand() {
+      inPlay = false;
+      renderActions();
+      renderHands(true);
+      setTimeout(() => dealerPlay(), 650);
     }
-    function finishHand() { inPlay = false; renderActions(); renderHands(true); setTimeout(() => dealerPlay(), 650); }
     function dealerPlay() {
       let dealerAnim = () => {
         if (handValue(dealerHand) < 17 || (handValue(dealerHand) === 17 && hasSoft17(dealerHand))) {
@@ -637,29 +634,26 @@
     function settleBets() {
       let dealerVal = handValue(dealerHand);
       let messages = [], totalWin = 0, winAnim = false, loseAnim = false;
-      for (let i = 0; i < playerHands.length; i++) {
-        let hand = playerHands[i], val = handValue(hand), win = 0, msg = '';
-        if (isBlackjack(hand)) {
-          if (isBlackjack(dealerHand)) { win = bet; msg = 'Push (Both Blackjack)'; }
-          else { win = bet * 2; msg = 'Blackjack! You win 2x!'; winAnim = true; }
-        } else if (val > 21) { win = 0; msg = 'Busted!'; loseAnim = true; }
-        else if (dealerVal > 21) { win = bet * 2; msg = 'Dealer busts! You win!'; winAnim = true; }
-        else if (val > dealerVal) { win = bet * 2; msg = 'You win!'; winAnim = true; }
-        else if (val === dealerVal) { win = bet; msg = 'Push!'; }
-        else { win = 0; msg = 'You lose!'; loseAnim = true; }
-        playerChips += win; totalWin += win; messages.push(`Hand ${playerHands.length > 1 ? (i+1) + ': ' : ''}${msg}`);
-      }
+      let hand = playerHands[0];
+      let val = handValue(hand), win = 0, msg = '';
+      if (isBlackjack(hand)) {
+        if (isBlackjack(dealerHand)) { win = bet; msg = 'Push (Both Blackjack)'; }
+        else { win = bet * 2; msg = 'Blackjack! You win 2x!'; winAnim = true; }
+      } else if (val > 21) { win = 0; msg = 'Busted!'; loseAnim = true; }
+      else if (dealerVal > 21) { win = bet * 2; msg = 'Dealer busts! You win!'; winAnim = true; }
+      else if (val > dealerVal) { win = bet * 2; msg = 'You win!'; winAnim = true; }
+      else if (val === dealerVal) { win = bet; msg = 'Push!'; }
+      else { win = 0; msg = 'You lose!'; loseAnim = true; }
+      playerChips += win; totalWin += win; messages.push(msg);
       updateChips(); updateBetBox(); statusMsg.textContent = messages.join(' | ');
       if (winAnim) showResultAnimation('win'); else if (loseAnim) showResultAnimation('lose');
       updateReloadBtn();
-      if (playerChips >= 20) {
-        setTimeout(() => {
-          nextHandBtn.style.display = '';
-          nextHandBtn.classList.add('pulse');
-          dealBtn.classList.add('pulse');
-          waitingNextHand = true;
-        }, 200);
-      }
+      setTimeout(() => {
+        waitingNextHand = true;
+        nextHandBtn.style.display = '';
+        nextHandBtn.classList.add('pulse');
+        updateFlashing();
+      }, 400);
       enableBetting(false);
     }
     nextHandBtn.onclick = () => { waitingNextHand = false; nextHandBtn.classList.remove('pulse'); nextHandBtn.style.display = 'none'; dealBtn.classList.remove('pulse'); resetGame(); };
