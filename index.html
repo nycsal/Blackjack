@@ -656,7 +656,13 @@
       }, 400);
       enableBetting(false);
     }
-    nextHandBtn.onclick = () => { waitingNextHand = false; nextHandBtn.classList.remove('pulse'); nextHandBtn.style.display = 'none'; dealBtn.classList.remove('pulse'); resetGame(); };
+    nextHandBtn.onclick = () => {
+      waitingNextHand = false;
+      nextHandBtn.classList.remove('pulse');
+      nextHandBtn.style.display = 'none';
+      dealBtn.classList.remove('pulse');
+      resetGame();
+    };
     reloadBtn.onclick = () => {
       if (playerChips < 20) {
         playerChips += 10000;
